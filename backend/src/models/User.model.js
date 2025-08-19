@@ -1,6 +1,6 @@
 import mongoose, {Schema} from 'mongoose';
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 const userSchema = new mongoose.Schema(
     {
@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema(
 
         }
     },
-{timestamps})
+{timestamps: true})
 
 userSchema.pre("save", async function(next) {
     if(!this.isModified("password"))
