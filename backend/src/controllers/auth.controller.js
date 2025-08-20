@@ -117,6 +117,24 @@ const logoutUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "User logged Out successfully"))
 })
 
+const me = asyncHandler(async (req, res) => {
+    const userId = req.user?._id;
+
+    if(!userId){
+        throw new ApiError(401, "Unauthorized request");
+    }
+
+    const user = await User.findById(userId).select("-password -refreshToken");
+
+    if(!user){
+        throw new ApiError(404, "User not found");
+    }
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, user, "User details fetched successfully"));
+});
+
 const refreshAccessToken = asyncHandler(async(req, res) =>{
     const incomingrefreshToken = req.cookies.refreshToken || req.body.refreshToken;
 
@@ -165,5 +183,6 @@ export {
     registerUser,
     loginUser,
     logoutUser,
+    me,
     refreshAccessToken
 }
