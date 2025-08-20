@@ -21,7 +21,7 @@ export default function Signup(){
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="min-h-screen flex items-center justify-center bg-gray-400">
             <form onSubmit={handleSubmit} className="bg-white p-8 rounded-2xl shadow w-full max-w-md">
                 <h1 className="text-2xl font-bold mb-6">Create organizer account</h1>
                 <input className="border p-3 rounded w-full mb-3" name="name" placeholder="Name" onChange={handleChange}/>
