@@ -9,7 +9,7 @@ router.post("/register", registerUser);
 router.post("/login", loginUser);
 // secured routes
 router.post("/logout", protect, logoutUser);
-router.get("/me", protect, me)
+router.get("/me", protect, me);
 router.post("/refresh-token", refreshAccessToken);
 
 export default router;
