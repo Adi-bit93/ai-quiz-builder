@@ -1,5 +1,5 @@
 import { Router } from "express" ;
-import { registerUser, loginUser, logoutUser, me, refreshAccessToken } from "../controllers/auth.controller.js";
+import { registerUser, loginUser, logoutUser, profile, refreshAccessToken } from "../controllers/auth.controller.js";
 import { protect } from "../middlewares/auth.middleware.js";
 
 
@@ -9,7 +9,7 @@ router.post("/register", registerUser);
 router.post("/login", loginUser);
 // secured routes
 router.post("/logout", protect, logoutUser);
-router.get("/me", protect, me);
+router.get("/profile", protect, profile);
 router.post("/refresh-token", refreshAccessToken);
 
 export default router;

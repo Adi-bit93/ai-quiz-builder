@@ -117,7 +117,7 @@ const logoutUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "User logged Out successfully"))
 })
 
-const me = asyncHandler(async (req, res) => {
+const profile = asyncHandler(async (req, res) => {
     const userId = req.user?._id;
 
     if(!userId){
@@ -183,6 +183,6 @@ export {
     registerUser,
     loginUser,
     logoutUser,
-    me,
+    profile,
     refreshAccessToken
 }

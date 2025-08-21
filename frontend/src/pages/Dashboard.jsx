@@ -8,7 +8,7 @@ export default function Dashboard(){
 
     useEffect(() => {
         (async () => {
-            const res = await apiWithAutoRefresh("/api/v1/auth/me", {method: "GET"}, getToken, setToken);
+            const res = await apiWithAutoRefresh("/auth/profile", {method: "GET"}, getToken, setToken);
             if(res.ok){
                 const json = await res.json();
                 setMe(json.data);

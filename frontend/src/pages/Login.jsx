@@ -12,7 +12,7 @@ export default function Login(){
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const res = await apiRequest("/api/auth/login", {method: "POST", body: form});
+        const res = await apiRequest("/auth/login", {method: "POST", body: form});
 
         const json = await res.json().catch(() => ({}));
         if(res.ok){
