@@ -34,3 +34,11 @@ export const apiWithAutoRefresh = async(path, options, getToken, setToken) => {
 
     return res;
 };
+
+export const api = {
+  get: (path, options) => apiRequest(path, { ...options, method: "GET" }),
+  post: (path, options) => apiRequest(path, { ...options, method: "POST" }),
+  put: (path, options) => apiRequest(path, { ...options, method: "PUT" }),
+  delete: (path, options) => apiRequest(path, { ...options, method: "DELETE" }),
+};
+export default api;

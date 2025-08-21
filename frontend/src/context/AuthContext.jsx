@@ -1,4 +1,4 @@
-import { createContext, useState, useContext } from "react";
+import { createContext, useState, useContext, useEffect } from "react";
 import api from "../lib/api.js";
 
 const AuthContext = createContext(null);
@@ -40,8 +40,12 @@ export const AuthProvider = ({ children }) => {
                 const res = await api.get("/auth/profile", {
                     headers: { Authorization: `Bearer ${accessToken}`},
                 });
-                setUser(res.data.user)
-                
+                if(res.ok) {
+                    const json = await res.json();
+                    setUser(json.data || json.user || json)
+                }else {
+                    logout();
+                }
             } catch (err) {
                 console.error("Session restore failed: ",err);
                 logout(); // token invalid → clear it
@@ -61,5 +65,5 @@ export const AuthProvider = ({ children }) => {
         setUser
     };
 
-    return <AuthContext.Provider value={value}>{!loading &&children}</AuthContext.Provider>;
+    return <AuthContext.Provider value={value}>{!loading && children}</AuthContext.Provider>;
 }
