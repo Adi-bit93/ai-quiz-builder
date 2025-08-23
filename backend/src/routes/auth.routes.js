@@ -1,12 +1,21 @@
-import { Router } from "express" ;
+import { Router } from "express";
 import { registerUser, loginUser, logoutUser, profile, refreshAccessToken } from "../controllers/auth.controller.js";
 import { protect } from "../middlewares/auth.middleware.js";
+import { rateLimit } from "../middlewares/rateLimit.js";
 
 
-const router  = Router();
+const router = Router();
 
 router.post("/register", registerUser);
-router.post("/login", loginUser);
+router.post("/login",
+    rateLimit({
+        windowInSeconds: 60, // 1 minute
+        maxRequests: 5,
+        keyPrefix: "login"
+    }),
+    loginUser
+);
+
 // secured routes
 router.post("/logout", protect, logoutUser);
 router.get("/profile", protect, profile);
