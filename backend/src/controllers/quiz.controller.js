@@ -56,10 +56,39 @@ const getQuizById = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, quiz, "Quiz fetched successfully"));
 });
 
+const updateQuiz = asyncHandler(async (req, res) => {
+    const { title, topic, difficulty, questionCount, timerMode, timerSeconds } = req.body;
+
+    const quiz = await Quiz.findOneAndUpdate(
+        {
+            _id: req.params.id,
+            ownerId: req.user?._id
+        },
+        {
+            title,
+            topic,
+            difficulty,
+            questionCount,
+            timerMode,
+            timerSeconds
+        },
+        { new: true }
+    );
+
+    if (!quiz) throw new ApiError(404, "Quiz not found");
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, quiz, "Quiz updated successfully"));
+});
+
+
 
 export {
     createQuiz,
     getQuizzes,
-    getQuizById
+    getQuizById,
+    updateQuiz,
+
 }
 
