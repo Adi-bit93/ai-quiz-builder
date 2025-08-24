@@ -82,6 +82,25 @@ const updateQuiz = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, quiz, "Quiz updated successfully"));
 });
 
+const publishQuiz = asyncHandler(async (req, res) => {
+    const quiz = await Quiz.findOne({
+        _id: req.params.id,
+        ownerId: req.user?._id
+    });
+
+    if (!quiz) {
+        throw new ApiError(404, "Quiz not found");
+    }
+
+    if(quiz.status !== 'draft') throw new ApiError(400, "Quiz already published/archived");
+
+   quiz.status = 'published';
+   await quiz.save();
+
+   return res
+       .status(200)
+       .json(new ApiResponse(200, quiz, "Quiz published successfully"));
+});
 
 
 export {
