@@ -3,6 +3,7 @@ import { asyncHandler } from '../utils/asyncHandler.js';
 import { ApiError } from '../utils/ApiError.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
 import { generateMockQuestions } from '../services/ai.services.js';
+import { options } from 'sanitize-html';
 
 const createQuiz = asyncHandler(async (req, res) => {
     const {title, topic, difficulty, questionCount, timerMode, timerSeconds} = req.body;
@@ -114,6 +115,27 @@ const deleteQuiz = asyncHandler(async (req, res) => {
         .status(200)
         .json(new ApiResponse(200, {}, "Quiz deleted successfuly"))
 });
+
+const joinQuizByCode = asyncHandler(async (req, res) => {
+    const quiz = await Quiz.findOne({
+        code: req.params.code,
+        status:"published"
+    });
+
+    if (!quiz) {
+        throw new ApiError(404, "Quiz not found or not available");
+    }
+
+    const safeQuiz = quiz.toObject();
+    safeQuiz.questions = safeQuiz.questions.map((q) => ({
+        text: q.text,
+        options: q.options
+    }));
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, safeQuiz, "Quiz joined successfully"));
+})
 
 export {
     createQuiz,
