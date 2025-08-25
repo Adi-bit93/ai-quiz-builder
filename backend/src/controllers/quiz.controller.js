@@ -143,6 +143,8 @@ export {
     getQuizById,
     updateQuiz,
     publishQuiz,
+    deleteQuiz,
+    joinQuizByCode
 
 }
 
