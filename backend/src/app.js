@@ -12,9 +12,10 @@ app.use(express.static("public"));
 app.use(cookieParser());
 
 import authRoutes from './routes/auth.routes.js';
+import quizRoutes from './routes/quiz.routes.js';
 
 // routes
 app.use("/api/v1/auth", authRoutes);
-
+app.use("/api/v1/quizzes", quizRoutes);
 
 export { app }
