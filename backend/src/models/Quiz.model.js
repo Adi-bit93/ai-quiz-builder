@@ -70,7 +70,7 @@ const QuizSchema = new mongoose.Schema(
             type: Number,
             min: 1, 
             max: 3500, 
-            dafault: 600
+            default: 600
         },
         scoring: {
             correct: {type: Number, default: 4},

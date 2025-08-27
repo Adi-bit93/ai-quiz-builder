@@ -2,15 +2,14 @@ import express from 'express';
 import {
     createQuiz,
     getQuizById,
-    getQuizById,
     getQuizzes,
     updateQuiz,
     publishQuiz,
     deleteQuiz,
     joinQuizByCode,
-} from '../controllers/quiz.controller';
+} from '../controllers/quiz.controller.js';
 
-import { protect } from '../middlewares/auth.middleware';
+import { protect } from '../middlewares/auth.middleware.js';
 import { rateLimit } from '../middlewares/rateLimit.js';
 
 const router = express.Router();

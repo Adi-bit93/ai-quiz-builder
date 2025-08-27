@@ -3,7 +3,7 @@ import { asyncHandler } from '../utils/asyncHandler.js';
 import { ApiError } from '../utils/ApiError.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
 import { generateMockQuestions } from '../services/ai.services.js';
-import { options } from 'sanitize-html';
+import  options  from 'sanitize-html';
 
 const createQuiz = asyncHandler(async (req, res) => {
     const {title, topic, difficulty, questionCount, timerMode, timerSeconds} = req.body;
@@ -21,6 +21,7 @@ const createQuiz = asyncHandler(async (req, res) => {
         ownerId: req.user._id,
         title,
         topic,
+        questionCount,
         difficulty: difficulty || "medium",
         timerMode: timerMode || "quiz",
         timerSeconds: timerSeconds || 600,
