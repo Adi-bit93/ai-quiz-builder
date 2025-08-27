@@ -1,4 +1,4 @@
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from '../context/AuthContext.jsx';
 import { apiWithAutoRefresh } from '../lib/api.js';
 import { useNavigate } from "react-router-dom";

@@ -10,11 +10,14 @@ export const apiRequest = async (path, { method="GET", body, token } = {})=>{
             },
             body: body ? JSON.stringify(body) : undefined,
             credentials: "include",
-        })
+        });
+
+        const data = await res.json().catch(() => null);
     
-        return res
+        return {ok: res.ok, status: res.status, data};
     } catch (error) {
-        console.log("API request error: ",error);
+        console.error("API request error: ",error);
+        throw new Error(error.message || "API request failed");
     }
 };
 
@@ -41,4 +44,12 @@ export const api = {
   put: (path, options) => apiRequest(path, { ...options, method: "PUT" }),
   delete: (path, options) => apiRequest(path, { ...options, method: "DELETE" }),
 };
+
+export const quizApi = {
+    create: (body, token) => api.post("/quizzes", { body, token }),
+    list: (token) => api.get("/quizzes", { token }),
+    getById: (id, token) => api.get(`/quizzes/${id}`, { token }),
+    update: (id, body, token ) => api.put(`/quizzes/${id}`, { body, token }),
+    delete: (id, token) => api.delete(`/quizzes/${id}`, {token})
+}
 export default api;
