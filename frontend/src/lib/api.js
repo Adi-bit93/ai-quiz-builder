@@ -12,9 +12,9 @@ export const apiRequest = async (path, { method="GET", body, token } = {})=>{
             credentials: "include",
         });
 
-        const data = await res.json().catch(() => null);
+        // const data = await res.json().catch(() => null);
     
-        return {ok: res.ok, status: res.status, data};
+        return res
     } catch (error) {
         console.error("API request error: ",error);
         throw new Error(error.message || "API request failed");
