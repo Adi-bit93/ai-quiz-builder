@@ -61,19 +61,17 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4 md:p-8">
+    <div className="min-h-screen p-4 bg-gray-100 md:p-8">
       <div className="max-w-5xl mx-auto">
-        {/* Header */}
+        {/*Header*/}
         <div className="flex flex-col md:flex-row justify-between items-center mb-6">
-          <h1 className="text-2xl font-semibold mb-4 md:mb-0">
-            Organizer Dashboard
-          </h1>
+          <h1 className="text-2xl font-semibold mb-4 md:mb-0">Organizer Dashboard</h1>
           <div className="flex gap-3">
             <button
               onClick={() => navigate("/quizzes/new")}
               className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
             >
-              + Create Quiz
+              Create Quiz
             </button>
             <button
               onClick={() => {
@@ -86,31 +84,28 @@ export default function Dashboard() {
             </button>
           </div>
         </div>
-
-        {/* Profile card */}
+        {/*profile card*/}
         {profile && (
-          <div className="bg-white shadow-lg rounded-xl p-4 mb-6">
+          <div className="bg-white rounded-xl p-4 mb-6">
             <p>
               Logged in as{" "}
-              <span className="font-bold">{profile.name}</span> <br />
+              <span className="font-bold">{profile.name}</span><br />
               <span className="text-gray-600">{profile.email}</span>
             </p>
           </div>
         )}
-
         {/* Quizzes section */}
         <h2 className="text-xl font-medium mb-3">Your Quizzes</h2>
         {loadingQuizzes ? (
           <p>Loading quizzes...</p>
-        ) : quizzes?.length === 0 ? (
+        ) : quizzes.length === 0 ? (
           <p className="text-gray-600">No quizzes created yet.</p>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {quizzes?.map((quiz) => (
+            {quizzes.map((quiz) => (
               <div
                 key={quiz._id}
-                className="bg-white shadow-md rounded-xl p-4 flex flex-col justify-between"
-              >
+                className="bg-white shadow-md rounded-xl p-4 flex flex-col justify-between">
                 <div>
                   <h3 className="font-semibold text-lg">{quiz.title}</h3>
                   <p className="text-sm text-gray-600">
@@ -136,6 +131,7 @@ export default function Dashboard() {
                 </div>
               </div>
             ))}
+
           </div>
         )}
       </div>
