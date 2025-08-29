@@ -39,12 +39,20 @@ export default function Dashboard() {
   useEffect(() => {
     (async () => {
       try {
-        const res = await quizApi.list(getToken());
-        if (res.ok) setQuizzes(res.data);
+        const quizRes = await apiWithAutoRefresh(
+          "/quizzes",
+          { method: "GET" },
+          getToken,
+          setToken
+        );
+        if (quizRes.ok) {
+          const quizJson = await quizRes.json();
+          setQuizzes(quizJson.data || []);
+        }
       } catch (err) {
-        console.error("Quiz fetch failed:", err);
-      } finally {
-        setLoadingQuizzes(false);
+        console.error("Dashboard fetch failed:", err);
+        logout();
+        navigate("/login");
       }
     })();
   }, []);
@@ -68,7 +76,7 @@ export default function Dashboard() {
           <h1 className="text-2xl font-semibold mb-4 md:mb-0">Organizer Dashboard</h1>
           <div className="flex gap-3">
             <button
-              onClick={() => navigate("/quizzes/new")}
+              onClick={() => navigate("/quizzes/create")}
               className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
             >
               Create Quiz
@@ -94,44 +102,36 @@ export default function Dashboard() {
             </p>
           </div>
         )}
-        {/* Quizzes section */}
-        <h2 className="text-xl font-medium mb-3">Your Quizzes</h2>
-        {loadingQuizzes ? (
-          <p>Loading quizzes...</p>
-        ) : quizzes.length === 0 ? (
-          <p className="text-gray-600">No quizzes created yet.</p>
+          {/* Quizzes List */}
+        {quizzes?.length === 0 ? (
+          <p className="text-gray-600">No quizzes yet. Create one!</p>
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {quizzes.map((quiz) => (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {quizzes?.map((quiz) => (
               <div
                 key={quiz._id}
-                className="bg-white shadow-md rounded-xl p-4 flex flex-col justify-between">
-                <div>
-                  <h3 className="font-semibold text-lg">{quiz.title}</h3>
-                  <p className="text-sm text-gray-600">
-                    {quiz.topic} • {quiz.difficulty}
-                  </p>
-                  <p className="text-sm text-gray-500 mt-1">
-                    {quiz.questionCount} questions | Timer: {quiz.timerSeconds}s
-                  </p>
-                </div>
-                <div className="flex justify-between items-center mt-4">
-                  <button
-                    onClick={() => navigate(`/quizzes/${quiz._id}`)}
-                    className="text-blue-600 hover:underline"
+                className="bg-white p-4 shadow rounded-xl hover:shadow-lg transition"
+              >
+                <h2 className="text-lg font-semibold mb-1">{quiz.title}</h2>
+                <p className="text-gray-600 text-sm mb-2">{quiz.topic}</p>
+                <div className="flex justify-between items-center text-sm">
+                  <span
+                    className={`px-2 py-1 rounded text-white ${
+                      quiz.difficulty === "easy"
+                        ? "bg-green-500"
+                        : quiz.difficulty === "medium"
+                        ? "bg-yellow-500"
+                        : "bg-red-500"
+                    }`}
                   >
-                    View
-                  </button>
-                  <button
-                    onClick={() => handleDelete(quiz._id)}
-                    className="text-red-500 hover:underline"
-                  >
-                    Delete
-                  </button>
+                    {quiz.difficulty}
+                  </span>
+                  <span className="text-gray-500">
+                    {quiz.questions.length} Qs
+                  </span>
                 </div>
               </div>
             ))}
-
           </div>
         )}
       </div>

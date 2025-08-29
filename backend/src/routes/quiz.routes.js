@@ -16,7 +16,7 @@ const router = express.Router();
 
 router.use(protect);
 
-router.post("/new",
+router.post("/",
     rateLimit({
         windowInSeconds: 60,
         maxRequests: 5

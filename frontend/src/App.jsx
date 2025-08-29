@@ -5,6 +5,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Signup from './pages/Signup';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
+import CreateQuiz from './pages/CreateQuiz';
 function App() {
   return (
     <AuthProvider>
@@ -14,6 +15,9 @@ function App() {
           <Route path="/login" element={<Login />}></Route>
           <Route element={<ProtectedRoute />}>
             <Route path='/dashboard' element={<Dashboard />}></Route>
+          </Route>
+          <Route element={<ProtectedRoute />}>
+            <Route path='/quizzes/create' element={<CreateQuiz />}></Route>
           </Route>
         </Routes>
       </BrowserRouter>

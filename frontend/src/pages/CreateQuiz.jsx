@@ -68,6 +68,21 @@ export default function CreateQuiz() {
                             onChange={handleChange}
                             className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-400" required />
                     </div>
+                    <div>
+                         <label className="block text-sm font-medium mb-1">Question Count *</label>
+                         <input
+                             type="number"
+                             name="questionCount"
+                             placeholder="Number of question"
+                             value={form.questionCount}
+                             onChange={handleChange}
+                             className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-400"
+                             min="5"
+                             max="50"
+                             defaultValue="5"
+                             required
+                         />
+                    </div>
                     {/* Difficulty */}
                     <div>
                         <label className="block text-sm font-medium mb-1">Difficulty</label>
