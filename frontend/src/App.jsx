@@ -6,6 +6,7 @@ import Signup from './pages/Signup';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import CreateQuiz from './pages/CreateQuiz';
+import ViewQuiz from './pages/ViewQuiz';
 function App() {
   return (
     <AuthProvider>
@@ -18,6 +19,9 @@ function App() {
           </Route>
           <Route element={<ProtectedRoute />}>
             <Route path='/quizzes/create' element={<CreateQuiz />}></Route>
+          </Route>
+          <Route element={<ProtectedRoute />}>
+            <Route path='/quizzes/:id' element={<ViewQuiz />}></Route>
           </Route>
         </Routes>
       </BrowserRouter>
