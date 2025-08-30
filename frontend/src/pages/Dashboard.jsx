@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
-import { apiWithAutoRefresh, quizApi } from "../lib/api.js";
+import { apiWithAutoRefresh } from "../lib/api.js";
 import { useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
@@ -78,89 +78,99 @@ export default function Dashboard() {
       if (res.ok) {
         setQuizzes(quizzes.filter((q) => q._id !== quizToDelete._id));
         setShowDeleteModal(false);
-        setQuizToDelete(null)
+        setQuizToDelete(null);
       } else {
         const error = await res.json();
         alert(error.message || "failed to delete quiz");
       }
     } catch (error) {
-      console.error("Delete failed: ",error);
+      console.error("Delete failed: ", error);
       alert("Something went wrong while deleting.");
     }
-  }
+  };
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <p className="text-gray-600">Loading dashboard...</p>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <p className="text-gray-600 animate-pulse">Loading dashboard...</p>
       </div>
-    )
+    );
   }
 
-
-
   return (
-    <div className="min-h-screen p-4 bg-gray-100 md:p-8">
-      <div className="max-w-5xl mx-auto">
-        {/*Header*/}
-        <div className="flex flex-col md:flex-row justify-between items-center mb-6">
-          <h1 className="text-2xl font-semibold mb-4 md:mb-0">Organizer Dashboard</h1>
-          <div className="flex gap-3">
+    <div className="min-h-screen p-4 bg-gray-50 md:p-8">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
+            Organizer Dashboard
+          </h1>
+          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
             <button
               onClick={() => navigate("/quizzes/create")}
-              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+              className="w-full sm:w-auto px-5 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition shadow-sm"
             >
-              Create Quiz
+              + Create Quiz
             </button>
             <button
               onClick={() => {
                 logout();
                 navigate("/login");
               }}
-              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+              className="w-full sm:w-auto px-5 py-2.5 bg-red-500 text-white rounded-xl hover:bg-red-600 transition shadow-sm"
             >
               Logout
             </button>
           </div>
         </div>
-        {/*profile card*/}
+
+        {/* Profile Card */}
         {profile && (
-          <div className="bg-white rounded-xl p-4 mb-6">
-            <p>
+          <div className="bg-white rounded-xl p-5 mb-8 shadow-sm border text-center sm:text-left">
+            <p className="text-gray-700">
               Logged in as{" "}
-              <span className="font-bold">{profile.name}</span><br />
-              <span className="text-gray-600">{profile.email}</span>
+              <span className="font-bold text-gray-900">{profile.name}</span>
+              <br />
+              <span className="text-gray-500 text-sm">{profile.email}</span>
             </p>
           </div>
         )}
+
         {/* Quizzes List */}
         {quizzes?.length === 0 ? (
-          <p className="text-gray-600">No quizzes yet. Create one!</p>
+          <p className="text-gray-600 text-center py-10">
+            No quizzes yet. Create one to get started 🚀
+          </p>
         ) : (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             {quizzes?.map((quiz) => (
               <div
                 key={quiz._id}
-                className="bg-white p-4 shadow rounded-xl hover:shadow-lg transition"
+                className="bg-white p-5 rounded-xl shadow hover:shadow-md transition flex flex-col justify-between border"
               >
-                <h2 className="text-lg font-semibold mb-1">{quiz.title}</h2>
-                <p className="text-gray-600 text-sm mb-2">{quiz.topic}</p>
-                <div className="flex justify-between items-center text-sm gap-1">
+                <div>
+                  <h2 className="text-lg font-semibold mb-1 text-gray-800 line-clamp-1">
+                    {quiz.title}
+                  </h2>
+                  <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+                    {quiz.topic}
+                  </p>
+                </div>
+                <div className="flex flex-wrap justify-between items-center text-sm mt-2 gap-2">
                   <span
-                    className={`px-2 py-1 rounded text-white ${quiz.difficulty === "easy"
+                    className={`px-2.5 py-1 rounded-lg text-white text-xs font-medium ${
+                      quiz.difficulty === "easy"
                         ? "bg-green-500"
                         : quiz.difficulty === "medium"
-                          ? "bg-yellow-500"
-                          : "bg-red-500"
-                      }`}
+                        ? "bg-yellow-500"
+                        : "bg-red-500"
+                    }`}
                   >
                     {quiz.difficulty}
                   </span>
-                  <span className="text-gray-500">
-                    {quiz.questions.length} Qs
-                  </span>
-                   <button
-                    className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+                  <span className="text-gray-500">{quiz.questions.length} Qs</span>
+                  <button
+                    className="px-3 py-1.5 bg-red-500 text-white rounded-lg hover:bg-red-600 text-xs transition w-full sm:w-auto"
                     onClick={() => confirmDelete(quiz)}
                   >
                     Delete
@@ -171,25 +181,30 @@ export default function Dashboard() {
           </div>
         )}
       </div>
-      {/*Delete Model */}
+
+      {/* Delete Modal */}
       {showDeleteModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40">
-          <div className="bg-white rounded-xl p-6 shadow-lg w-96">
-            <h3 className="text-lg font-semibold mb-4">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50 px-4">
+          <div className="bg-white rounded-xl p-6 shadow-lg w-full max-w-md border">
+            <h3 className="text-lg font-bold mb-4 text-gray-800 text-center sm:text-left">
               Delete Quiz: {quizToDelete?.title}
             </h3>
-            <p className="text-gray-600 mb-6"> Are you sure you want to delete this quiz? This action cannot be
-              undone.
+            <p className="text-gray-600 mb-6 text-sm leading-relaxed text-center sm:text-left">
+              Are you sure you want to delete this quiz? <br />
+              <span className="text-red-500 font-medium">
+                This action cannot be undone.
+              </span>
             </p>
-            <div className="flex jsutify-end gap-3">
-              <button 
+            <div className="flex flex-col sm:flex-row justify-end gap-3">
+              <button
                 onClick={() => setShowDeleteModal(false)}
-                className="px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400"
-              >Cancel
+                className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-800 transition w-full sm:w-auto"
+              >
+                Cancel
               </button>
               <button
                 onClick={handleDelete}
-                className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600"
+                className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition w-full sm:w-auto"
               >
                 Delete
               </button>
