@@ -52,7 +52,7 @@ export default function CreateQuiz() {
                 </h1>
                 <form className="space-y-5" onSubmit={handleSubmit}>
                     <div>
-                        <label className="block text-sm font-medium mb-1">Quiz Title</label>
+                        <label className="block text-sm font-medium mb-1">Quiz Title *</label>
                         <input type="text"
                             name="title"
                             value={form.title}
