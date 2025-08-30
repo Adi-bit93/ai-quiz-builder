@@ -158,17 +158,28 @@ export default function Dashboard() {
                 </div>
                 <div className="flex flex-wrap justify-between items-center text-sm mt-2 gap-2">
                   <span
-                    className={`px-2.5 py-1 rounded-lg text-white text-xs font-medium ${
-                      quiz.difficulty === "easy"
+                    className={`px-2.5 py-1 rounded-lg text-white text-xs font-medium ${quiz.difficulty === "easy"
                         ? "bg-green-500"
                         : quiz.difficulty === "medium"
-                        ? "bg-yellow-500"
-                        : "bg-red-500"
-                    }`}
+                          ? "bg-yellow-500"
+                          : "bg-red-500"
+                      }`}
                   >
                     {quiz.difficulty}
                   </span>
                   <span className="text-gray-500">{quiz.questions.length} Qs</span>
+                  <button
+                    className="px-3 py-1.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 text-xs transition w-full sm:w-auto"
+                    onClick={() => navigate(`/quizzes/${quiz._id}`)}
+                  >
+                    View
+                  </button>
+                  <button
+                    className="px-3 py-1.5 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 text-xs transition w-full sm:w-auto "
+                    onClick={() => navigate(`/quizzes/${quiz._id}`)}
+                  >
+                    Edit
+                  </button>
                   <button
                     className="px-3 py-1.5 bg-red-500 text-white rounded-lg hover:bg-red-600 text-xs transition w-full sm:w-auto"
                     onClick={() => confirmDelete(quiz)}
