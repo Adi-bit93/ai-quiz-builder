@@ -50,6 +50,27 @@ export default function EditQuiz(){
         setQuiz((prev) => ({...prev, questions: updatedQuestions}));
     };
 
+    const handleSave = async () => {
+        setSaving(true);
+        try {
+            const res = await apiWithAutoRefresh(`/quizzes/${id}`,
+                { method: "PUT", body: quiz},
+                getToken,
+                setToken
+            );
+            if (res.ok) {
+                alert("Quiz updated successfully!");
+                navigate("/dashboard");
+            } else {
+                alert("Failed to update quiz.");
+            }
+        } catch (err) {
+            console.error("Quiz update failed:", err);
+            alert("Something went wrong!");
+        } finally {
+            setSaving(false);
+        }
+    };
 
 
 
