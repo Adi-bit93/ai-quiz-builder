@@ -91,7 +91,7 @@ export default function ViewQuiz() {
                                 key={index}
                                 className="p-4 bg-gray-50 border rounded-xl shadow-sm">
                                 <h3 className="font-semibold mb-2">
-                                    Q{index + 1} : {q.questions}
+                                    Q{index + 1} : {q.question}
                                 </h3>
                                 <ul className="space-y-1">
                                     {q.options.map((opt, i) => (
