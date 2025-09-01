@@ -159,10 +159,10 @@ export default function Dashboard() {
                 <div className="flex flex-wrap justify-between items-center text-sm mt-2 gap-2">
                   <span
                     className={`px-2.5 py-1 rounded-lg text-white text-xs font-medium ${quiz.difficulty === "easy"
-                        ? "bg-green-500"
-                        : quiz.difficulty === "medium"
-                          ? "bg-yellow-500"
-                          : "bg-red-500"
+                      ? "bg-green-500"
+                      : quiz.difficulty === "medium"
+                        ? "bg-yellow-500"
+                        : "bg-red-500"
                       }`}
                   >
                     {quiz.difficulty}
@@ -179,6 +179,29 @@ export default function Dashboard() {
                     onClick={() => navigate(`/quizzes/${quiz._id}/update`)}
                   >
                     Edit
+                  </button>
+                  <button onClick={async () => {
+                    try {
+                      const res = await apiWithAutoRefresh(`/quizzes/${quiz._id}/publish`,
+                        { method: "PATCH" },
+                        getToken,
+                        setToken
+                      );
+                      if (res.ok) {
+                        setQuizzes((prev) =>
+                          prev.map((q) => q._id === quiz._id ? { ...q, published: true } : q
+                          )
+                        );
+                      } else {
+                        alert("Failed to publish quiz.");
+                      }
+                    } catch (error) {
+                        console.error("Publish quiz failed: ", error);
+                    }
+                  }}
+                  disabled={quiz.published}
+                  className={`px-4 py-2 rounded-lg transition ${quiz.published ? "bg-gray-400 text-white cursor-not-allowed" : "bg-green-500 text-white hover:bg-green-600"}`}>
+                    {quiz.published ? "Published" : "Publish"}
                   </button>
                   <button
                     className="px-3 py-1.5 bg-red-500 text-white rounded-lg hover:bg-red-600 text-xs transition w-full sm:w-auto"
