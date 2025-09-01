@@ -25,7 +25,7 @@ router.post("/",
 );
 router.get("/", getQuizzes);
 router.get("/:id", getQuizById);
-router.put("/:id", updateQuiz);
+router.put("/:id/update", updateQuiz);
 router.patch("/:id/publish",
     rateLimit({
         windowInSeconds: 60,

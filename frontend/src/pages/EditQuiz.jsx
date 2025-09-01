@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 import { apiWithAutoRefresh } from "../lib/api.js";
 
-export default function EditQuiz(){
+export default function EditQuiz() {
     const { id } = useParams();
     const navigate = useNavigate();
     const { getToken, setToken, logout } = useAuth();
@@ -24,10 +24,10 @@ export default function EditQuiz(){
                     getToken,
                     setToken
                 );
-                if(res.ok) {
+                if (res.ok) {
                     const data = await res.json();
                     setQuiz(data.data)
-                } else { 
+                } else {
                     navigate("/dashboard");
                 }
             } catch (err) {
@@ -41,20 +41,20 @@ export default function EditQuiz(){
     }, [id]);
 
     const handleChange = (field, value) => {
-        setQuiz((prev) => ({...prev, [field]: value}))
+        setQuiz((prev) => ({ ...prev, [field]: value }))
     };
 
     const handleQuestionChange = (index, field, value) => {
         const updatedQuestions = [...quiz.questions];
         updatedQuestions[index][field] = value;
-        setQuiz((prev) => ({...prev, questions: updatedQuestions}));
+        setQuiz((prev) => ({ ...prev, questions: updatedQuestions }));
     };
 
     const handleSave = async () => {
         setSaving(true);
         try {
-            const res = await apiWithAutoRefresh(`/quizzes/${id}`,
-                { method: "PUT", body: quiz},
+            const res = await apiWithAutoRefresh(`/quizzes/${id}/update`,
+                { method: "PUT", body: quiz },
                 getToken,
                 setToken
             );
@@ -72,7 +72,7 @@ export default function EditQuiz(){
         }
     };
 
-    if(!loading) {
+    if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-100">
                 <p className="text-gray-600">Loading quiz for editing... </p>
@@ -80,7 +80,7 @@ export default function EditQuiz(){
         );
     }
 
-    if(!quiz) {
+    if (!quiz) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-100">
                 <p className="text-gray-600">Quiz not found</p>
@@ -96,46 +96,89 @@ export default function EditQuiz(){
                 {/* Quiz fields */}
                 <div className="space-y-4">
                     <input
-                    type="text"
-                    value = {quiz.title}
-                    onChange={(e) => handleChange("title", e.target.value)}
-                    className="w-full p-2 border rounded-lg"
-                    placeholder="Quiz Title"
+                        type="text"
+                        value={quiz.title}
+                        onChange={(e) => handleChange("title", e.target.value)}
+                        className="w-full p-2 border rounded-lg"
+                        placeholder="Quiz Title"
                     />
 
                     <input
-                    type="text"
-                    value = {quiz.topic}
-                    onChange={(e) => handleChange("topic", e.target.value)}
-                    className="w-full p-2 border rounded-lg"
-                    placeholder="Topic"
+                        type="text"
+                        value={quiz.topic}
+                        onChange={(e) => handleChange("topic", e.target.value)}
+                        className="w-full p-2 border rounded-lg"
+                        placeholder="Topic"
                     />
 
                     <select
-                    value={quiz.difficulty}
-                    onChange={(e) => handleChange("difficulty", e.target.value)}
-                    className="w-full p-2 border rounded-lg">
+                        value={quiz.difficulty}
+                        onChange={(e) => handleChange("difficulty", e.target.value)}
+                        className="w-full p-2 border rounded-lg">
                         <option value="easy">Easy</option>
                         <option value="medium">Medium</option>
                         <option value="hard">Hard</option>
                     </select>
 
                     <input type="number"
-                    value={quiz.questionCount}
-                    onChange={(e) => handleChange("questionCount", e.target.value)}
-                    className="w-full p-2 border rounded-lg"
-                    placeholder="Number of Questions"
-                    min="1"
-                    max="50"
+                        value={quiz.questionCount}
+                        onChange={(e) => handleChange("questionCount", e.target.value)}
+                        className="w-full p-2 border rounded-lg"
+                        placeholder="Number of Questions"
+                        min="1"
+                        max="50"
                     />
                 </div>
 
-                 {/* Questions */}
-                 <h2 className="text-xl font-bold mt-6 mb-4">Questions</h2>
+                {/* Questions */}
+                <h2 className="text-xl font-bold mt-6 mb-4">Questions</h2>
+                <div className="space-y-4">
+                    {quiz.questions.map((q, index) => (
+                        <div
+                            key={index}
+                            className="p-4 bg-gray-50 border rounded-lg shadow-sm">
+                            <input type="text"
+                                value={q.question}
+                                onChange={(e) => handleQuestionChange(index, "question", e.target.value)}
+                                className="w-full p-2 border rounded-lg mb-2"
+                                placeholder={`Question ${index + 1}`}
+                            />
+                            {q.options.map((opt, i) => (
+                                <div key={i} className="flex items-center gap-2 mb-2">
+                                    <input type="text"
+                                        value={opt}
+                                        onChange={(e) => {
+                                            const updatedOptions = [...q.options];
+                                            updatedOptions[i] = e.target.value;
+                                            handleQuestionChange(index, "options", updatedOptions)
+                                        }}
+                                        className="flex-1 p-2 border rounded-lg"
+                                        placeholder={`Option ${i + 1}`}
+                                    />
+                                    <input type="radio"
+                                        checked={q.correctAnswer === i}
+                                        onChange={() => handleQuestionChange(index, "correctAnswer", i)}
+                                    />
+                                    <span className="text-sm text-gray-600" >Correct</span>
+                                </div>
+                            ))}
+                        </div>
+                    ))}
+                </div>
+                {/* Buttons*/}
+                <div className="flex justify-end gap-4 mt-6">
+                    <button 
+                        onClick={() => navigate("/dashboard")}
+                        className="px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition">Cancel
+                    </button>
+                    <button 
+                    onClick={handleSave}
+                    disabled={saving}
+                    className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition disabled:opacity-50">
+                        {saving ? "Saving..." : "Save Changes"}
+                    </button>
+                </div>
             </div>
         </div>
     )
-
-
-
 }

@@ -176,7 +176,7 @@ export default function Dashboard() {
                   </button>
                   <button
                     className="px-3 py-1.5 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 text-xs transition w-full sm:w-auto "
-                    onClick={() => navigate(`/quizzes/${quiz._id}`)}
+                    onClick={() => navigate(`/quizzes/${quiz._id}/update`)}
                   >
                     Edit
                   </button>
