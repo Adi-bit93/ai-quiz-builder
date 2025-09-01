@@ -97,7 +97,7 @@ export default function ViewQuiz() {
                                     {q.options.map((opt, i) => (
                                         <li
                                             key={i}
-                                            className={`px-3 py-1 rounded ${i === q.correctAnswer ? "bg-green-100 text-green-700 font-medium" : "bg-gray-100 text-gray-700"}`}>
+                                            className={`px-3 py-1 rounded ${i === q.correctIndex ? "bg-green-100 text-green-700 font-medium" : "bg-gray-100 text-gray-700"}`}>
                                             {opt}
                                         </li>
                                     ))}
@@ -108,6 +108,11 @@ export default function ViewQuiz() {
                         <p className="text-gray-500">No questions found.</p>
                     )}
                 </div>
+             <button
+                        onClick={() => navigate("/dashboard")}
+                        className="px-4 py-2 my-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition">
+                        Dashboard
+                    </button>
             </div>
         </div>
     )

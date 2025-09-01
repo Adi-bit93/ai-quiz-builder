@@ -60,7 +60,7 @@ export default function EditQuiz() {
             );
             if (res.ok) {
                 alert("Quiz updated successfully!");
-                navigate("/dashboard");
+                navigate(`/quizzes/${id}`);
             } else {
                 alert("Failed to update quiz.");
             }
@@ -138,8 +138,8 @@ export default function EditQuiz() {
                             key={index}
                             className="p-4 bg-gray-50 border rounded-lg shadow-sm">
                             <input type="text"
-                                value={q.question}
-                                onChange={(e) => handleQuestionChange(index, "question", e.target.value)}
+                                value={q.text}
+                                onChange={(e) => handleQuestionChange(index, "text", e.target.value)}
                                 className="w-full p-2 border rounded-lg mb-2"
                                 placeholder={`Question ${index + 1}`}
                             />
@@ -156,8 +156,8 @@ export default function EditQuiz() {
                                         placeholder={`Option ${i + 1}`}
                                     />
                                     <input type="radio"
-                                        checked={q.correctAnswer === i}
-                                        onChange={() => handleQuestionChange(index, "correctAnswer", i)}
+                                        checked={q.correctIndex === i}
+                                        onChange={() => handleQuestionChange(index, "correctIndex", i)}
                                     />
                                     <span className="text-sm text-gray-600" >Correct</span>
                                 </div>
