@@ -168,7 +168,7 @@ export {
     updateQuiz,
     publishQuiz,
     deleteQuiz,
-    joinQuizByCode
-
+    joinQuizByCode,
+    generateQuizAI
 }
 

@@ -7,6 +7,7 @@ import {
     publishQuiz,
     deleteQuiz,
     joinQuizByCode,
+    generateQuizAI
 } from '../controllers/quiz.controller.js';
 
 import { protect } from '../middlewares/auth.middleware.js';
@@ -41,5 +42,13 @@ router.get("/join/:code",
         maxRequests:10
     }),
     joinQuizByCode);
+
+router.post("/generate", 
+    rateLimit({
+        windowInSeconds: 60,
+        maxRequests: 3,
+    }),
+    generateQuizAI
+)
 
 export default router;
