@@ -199,9 +199,9 @@ export default function Dashboard() {
                         console.error("Publish quiz failed: ", error);
                     }
                   }}
-                  disabled={quiz.published}
-                  className={`px-4 py-2 rounded-lg transition ${quiz.published ? "bg-gray-400 text-white cursor-not-allowed" : "bg-green-500 text-white hover:bg-green-600"}`}>
-                    {quiz.published ? "Published" : "Publish"}
+                  disabled={quiz.status}
+                  className={`px-4 py-2 rounded-lg transition ${quiz.status ? "bg-gray-400 text-white cursor-not-allowed" : "bg-green-500 text-white hover:bg-green-600"}`}>
+                    {quiz.status === "published" ? "Published" : "Publish"}
                   </button>
                   <button
                     className="px-3 py-1.5 bg-red-500 text-white rounded-lg hover:bg-red-600 text-xs transition w-full sm:w-auto"
