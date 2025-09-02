@@ -136,6 +136,29 @@ const joinQuizByCode = asyncHandler(async (req, res) => {
     return res
         .status(200)
         .json(new ApiResponse(200, safeQuiz, "Quiz joined successfully"));
+});
+
+const generateQuizAI = asyncHandler (async (req, res) => {
+    try {
+        const {topic, difficulty, questionCount} = req.body;
+
+        if (!topic || !questionCount) {
+            throw new ApiError(400, "Topic and questionCount are required");
+        }
+
+         // Mock AI logic (later we’ll integrate OpenAI/Gemini here)
+        const questions = Array.from({length: questionCount}).map((_, i) => ({
+            text: `Sample Question ${i + 1} on ${topic}?`,
+            options: ["Options A", "Options B ", "Options C", "Options D"],
+            correctIndex: Math.floor(Math.random() * 4),
+        }));
+
+        return res 
+            .status(200)
+            .json(new ApiResponse(200, {questions}, "Quiz generated successfully"));
+    } catch (error) {
+        next(error);
+    }
 })
 
 export {
