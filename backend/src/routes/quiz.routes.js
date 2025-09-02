@@ -17,6 +17,15 @@ const router = express.Router();
 
 router.use(protect);
 
+//AI Quiz Generator
+router.post("/generate", 
+    rateLimit({
+        windowInSeconds: 60,
+        maxRequests: 3,
+    }),
+    generateQuizAI
+)
+
 router.post("/",
     rateLimit({
         windowInSeconds: 60,
@@ -43,12 +52,5 @@ router.get("/join/:code",
     }),
     joinQuizByCode);
 
-router.post("/generate", 
-    rateLimit({
-        windowInSeconds: 60,
-        maxRequests: 3,
-    }),
-    generateQuizAI
-)
 
 export default router;
