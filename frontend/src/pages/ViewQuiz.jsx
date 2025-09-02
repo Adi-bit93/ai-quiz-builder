@@ -74,8 +74,8 @@ export default function ViewQuiz() {
                     <p className="text-gray-600">
                         <span className="font-semibold">Questions: </span>{" "}{quiz.questionCount}
                     </p>
-                    <p className="text-grya-700"><span className="font-semibold">Status: </span>{" "}
-                        {quiz.isPublished ? (
+                    <p className="text-gray-700"><span className="font-semibold">Status: </span>{" "}
+                        {quiz.status ? (
                             <span className="text-green-600 font-medium">Published</span>
                         ) : (
                             <span className="text-yellow-600 font-medium">Draft</span>
