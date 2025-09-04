@@ -8,6 +8,7 @@ import Dashboard from './pages/Dashboard';
 import CreateQuiz from './pages/CreateQuiz';
 import ViewQuiz from './pages/ViewQuiz';
 import EditQuiz from './pages/EditQuiz';
+import QuizAI from './pages/QuizAI';
 function App() {
   return (
     <AuthProvider>
@@ -26,6 +27,9 @@ function App() {
           </Route>
           <Route element={<ProtectedRoute />}>
             <Route path='/quizzes/:id/update' element={<EditQuiz />}></Route>
+          </Route>
+          <Route element={<ProtectedRoute />}>
+            <Route path='/quizzes/generate' element={<QuizAI />}></Route>
           </Route>
         </Routes>
       </BrowserRouter>
