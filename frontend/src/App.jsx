@@ -29,7 +29,7 @@ function App() {
             <Route path='/quizzes/:id/update' element={<EditQuiz />}></Route>
           </Route>
           <Route element={<ProtectedRoute />}>
-            <Route path='/quizzes/generate' element={<QuizAI />}></Route>
+            <Route path='/quizzes/ai' element={<QuizAI />}></Route>
           </Route>
         </Routes>
       </BrowserRouter>

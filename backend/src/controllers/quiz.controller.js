@@ -3,16 +3,17 @@ import { asyncHandler } from '../utils/asyncHandler.js';
 import { ApiError } from '../utils/ApiError.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
 import { generateMockQuestions } from '../services/ai.services.js';
-import  options  from 'sanitize-html';
+import options from 'sanitize-html';
+import { GoogleGenAI } from "@google/genai";
 
 const createQuiz = asyncHandler(async (req, res) => {
-    const {title, topic, difficulty, questionCount, timerMode, timerSeconds} = req.body;
+    const { title, topic, difficulty, questionCount, timerMode, timerSeconds } = req.body;
 
-    if (!title || !topic || !questionCount)  {
+    if (!title || !topic || !questionCount) {
         throw new ApiError(500, "All fields are required");
     }
 
-    const questions = generateMockQuestions({topic, difficulty, questionCount});
+    const questions = generateMockQuestions({ topic, difficulty, questionCount });
     if (!questions || questions.length === 0) {
         throw new ApiError(500, "Failed to generate questions");
     }
@@ -30,15 +31,15 @@ const createQuiz = asyncHandler(async (req, res) => {
 
     return res
         .status(201)
-        .json(new ApiResponse(201, quiz,"Quiz created successfully"))
+        .json(new ApiResponse(201, quiz, "Quiz created successfully"))
 });
 
 const getQuizzes = asyncHandler(async (req, res) => {
     const quizzes = await Quiz.find({
-        ownerId:req.user?._id
-    }).sort({createdAt: -1});
+        ownerId: req.user?._id
+    }).sort({ createdAt: -1 });
 
-    return res 
+    return res
         .status(200)
         .json(new ApiResponse(200, quizzes, "Quizzes fetched successfully"))
 });
@@ -51,7 +52,7 @@ const getQuizById = asyncHandler(async (req, res) => {
         }
     );
 
-    if(!quiz) throw new ApiError(404, "Quiz not found");
+    if (!quiz) throw new ApiError(404, "Quiz not found");
 
     return res
         .status(200)
@@ -94,14 +95,14 @@ const publishQuiz = asyncHandler(async (req, res) => {
         throw new ApiError(404, "Quiz not found");
     }
 
-    if(quiz.status !== 'draft') throw new ApiError(400, "Quiz already published/archived");
+    if (quiz.status !== 'draft') throw new ApiError(400, "Quiz already published/archived");
 
-   quiz.status = 'published';
-   await quiz.save();
+    quiz.status = 'published';
+    await quiz.save();
 
-   return res
-       .status(200)
-       .json(new ApiResponse(200, quiz, "Quiz published successfully"));
+    return res
+        .status(200)
+        .json(new ApiResponse(200, quiz, "Quiz published successfully"));
 });
 
 const deleteQuiz = asyncHandler(async (req, res) => {
@@ -110,7 +111,7 @@ const deleteQuiz = asyncHandler(async (req, res) => {
         ownerId: req.user?._id
     });
 
-    if(!quiz) throw new ApiError(404, "Quiz not found");
+    if (!quiz) throw new ApiError(404, "Quiz not found");
 
     return res
         .status(200)
@@ -120,7 +121,7 @@ const deleteQuiz = asyncHandler(async (req, res) => {
 const joinQuizByCode = asyncHandler(async (req, res) => {
     const quiz = await Quiz.findOne({
         code: req.params.code,
-        status:"published"
+        status: "published"
     });
 
     if (!quiz) {
@@ -138,27 +139,61 @@ const joinQuizByCode = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, safeQuiz, "Quiz joined successfully"));
 });
 
-const generateQuizAI = asyncHandler (async (req, res) => {
-    try {
-        const {topic, difficulty, questionCount} = req.body;
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-        if (!topic || !questionCount) {
-            throw new ApiError(400, "Topic and questionCount are required");
+const generateQuizAI = asyncHandler(async (req, res) => {
+    
+        const { topic, difficulty, questionCount } = req.body;
+        const ownerId = req.user._id;
+
+        if (!topic || !difficulty || !questionCount) {
+            throw new ApiError(400, "Topic, difficulty and questionCount are required");
         }
 
-         // Mock AI logic (later we’ll integrate OpenAI/Gemini here)
-        const questions = Array.from({length: questionCount}).map((_, i) => ({
-            text: `Sample Question ${i + 1} on ${topic}?`,
-            options: ["Options A", "Options B ", "Options C", "Options D"],
-            correctIndex: Math.floor(Math.random() * 4),
-        }));
+        // Mock AI logic (later we’ll integrate OpenAI/Gemini here)
+        const prompt = `Generate ${questionCount} multiple-choice question on topic "${topic}".
+        Difficulty: ${difficulty}.
+        Each question must have: 
+        - text
+        - 4 options 
+        - correctIndex (0-3)
+        Respond in strict JSON format like:
+        {
+            "questions": [
+                { "text": "...", "options": ["..","..","..",".."], "correctIndex": 1 }
+            ]
+        }`
 
-        return res 
-            .status(200)
-            .json(new ApiResponse(200, {questions}, "Quiz generated successfully"));
-    } catch (error) {
-        next(error);
-    }
+        let aiQuestions;
+        try {
+            const response = await ai.models.generateContent({
+                model: "gemini-2.5-flash-lite",
+                messages: [{ role: "user", content: prompt}],
+            });
+            const raw = response.choices[0].messages.content;
+            aiQuestions = JSON.parse(raw).questions;
+        } catch (error) {
+            console.error("AI generation failed:", error);
+            throw new ApiError(500, "Failed to generate quiz");
+        }
+
+        // save the quiz inside DB
+        const quiz = await Quiz.create({
+            ownerId,
+            title: title || `${topic} Quiz`,
+            topic,
+            difficulty,
+            questionCount,
+            questions: aiQuestions,
+            status: "draft",
+        })
+
+        return res
+            .status(201)
+            .json(
+                new ApiResponse(201, quiz, "Quiz generated and saved successfully ")
+            );
+    
 })
 
 export {
