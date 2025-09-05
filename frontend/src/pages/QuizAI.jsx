@@ -87,7 +87,7 @@ export default function QuizAI() {
             const { topic, difficulty, questionCount} = parseInput(input);
 
             const res = await apiWithAutoRefresh(
-                "/quizzes/generate",
+                "/quizzes/ai/generate",
                 {
                     method: "POST",
                     body: { topic, difficulty, questionCount }

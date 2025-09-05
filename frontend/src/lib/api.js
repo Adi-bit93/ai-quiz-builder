@@ -1,3 +1,5 @@
+
+
 const API_BASE = "http://localhost:5000/api/v1";
 
 export const apiRequest = async (path, { method="GET", body, token } = {})=>{
@@ -50,6 +52,9 @@ export const quizApi = {
     list: (token) => api.get("/quizzes", { token }),
     getById: (id, token) => api.get(`/quizzes/${id}`, { token }),
     update: (id, body, token ) => api.put(`/quizzes/${id}`, { body, token }),
-    delete: (id, token) => api.delete(`/quizzes/${id}`, {token})
+    delete: (id, token) => api.delete(`/quizzes/${id}`, {token}),
+
+     generateAI: (body, token) => 
+        api.post("/quizzes/ai/generate", { body, token }),
 }
 export default api;

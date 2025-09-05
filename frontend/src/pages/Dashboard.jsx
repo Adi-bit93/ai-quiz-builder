@@ -9,6 +9,7 @@ export default function Dashboard() {
   const [quizzes, setQuizzes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showModal, setShowModal] = useState()
   const [quizToDelete, setQuizToDelete] = useState(null);
   const navigate = useNavigate();
 
@@ -106,12 +107,50 @@ export default function Dashboard() {
             Organizer Dashboard
           </h1>
           <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+            {/* Create Quiz Button */}
             <button
-              onClick={() => navigate("/quizzes/create")}
-              className="w-full sm:w-auto px-5 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition shadow-sm"
+              onClick={() => setShowModal(true)}
+              className="mt-6 px-6 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition"
             >
               + Create Quiz
             </button>
+
+            {/* Modal */}
+            {showModal && (
+              <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+                <div className="bg-white rounded-2xl shadow-lg p-6 w-[90%] max-w-md">
+                  <h2 className="text-xl font-semibold mb-4 text-gray-800">
+                    How do you want to create the quiz?
+                  </h2>
+                  <div className="space-y-3">
+                    <button
+                      onClick={() => {
+                        setShowModal(false);
+                        navigate("/quizzes/create"); // Manual flow
+                      }}
+                      className="w-full px-4 py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition"
+                    >
+                      ✍️ Manual Quiz
+                    </button>
+                    <button
+                      onClick={() => {
+                        setShowModal(false);
+                        navigate("/ai"); // AI flow
+                      }}
+                      className="w-full px-4 py-2 bg-purple-500 text-white rounded-lg shadow hover:bg-purple-600 transition"
+                    >
+                      🤖 AI Generate Quiz
+                    </button>
+                  </div>
+                  <button
+                    onClick={() => setShowModal(false)}
+                    className="mt-4 text-gray-500 hover:text-gray-700 transition"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
             <button
               onClick={() => {
                 logout();
@@ -196,11 +235,11 @@ export default function Dashboard() {
                         alert("Failed to publish quiz.");
                       }
                     } catch (error) {
-                        console.error("Publish quiz failed: ", error);
+                      console.error("Publish quiz failed: ", error);
                     }
                   }}
-                  disabled={quiz.status}
-                  className={`px-4 py-2 rounded-lg transition ${quiz.status ? "bg-gray-400 text-white cursor-not-allowed" : "bg-green-500 text-white hover:bg-green-600"}`}>
+                    disabled={quiz.status}
+                    className={`px-4 py-2 rounded-lg transition ${quiz.status ? "bg-gray-400 text-white cursor-not-allowed" : "bg-green-500 text-white hover:bg-green-600"}`}>
                     {quiz.status === "published" ? "Published" : "Publish"}
                   </button>
                   <button

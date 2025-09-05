@@ -20,6 +20,9 @@ function App() {
             <Route path='/dashboard' element={<Dashboard />}></Route>
           </Route>
           <Route element={<ProtectedRoute />}>
+            <Route path='/ai' element={<QuizAI />}></Route>
+          </Route>
+          <Route element={<ProtectedRoute />}>
             <Route path='/quizzes/create' element={<CreateQuiz />}></Route>
           </Route>
           <Route element={<ProtectedRoute />}>
@@ -27,9 +30,6 @@ function App() {
           </Route>
           <Route element={<ProtectedRoute />}>
             <Route path='/quizzes/:id/update' element={<EditQuiz />}></Route>
-          </Route>
-          <Route element={<ProtectedRoute />}>
-            <Route path='/quizzes/ai' element={<QuizAI />}></Route>
           </Route>
         </Routes>
       </BrowserRouter>
