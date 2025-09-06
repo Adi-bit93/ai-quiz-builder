@@ -9,7 +9,7 @@ export default function JoinQuiz() {
 
     const handleJoin = async () => {
         try {
-            const res = await apiWithAutoRefresh(`/quizzes/join/${code}`);
+            const res = await apiRequest(`/quizzes/join/${code}`);
             if(res.ok) {
                 const json = await res.json();
                 navigate("/quiz-start", { state: { participant: name, quiz: json.data } });

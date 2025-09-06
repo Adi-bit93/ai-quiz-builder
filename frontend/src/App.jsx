@@ -9,6 +9,8 @@ import CreateQuiz from './pages/CreateQuiz';
 import ViewQuiz from './pages/ViewQuiz';
 import EditQuiz from './pages/EditQuiz';
 import QuizAI from './pages/QuizAI';
+import JoinQuiz from './pages/JoinQuiz';
+import QuizStart from './pages/QuizStart';
 function App() {
   return (
     <AuthProvider>
@@ -31,6 +33,8 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route path='/quizzes/:id/update' element={<EditQuiz />}></Route>
           </Route>
+           <Route path='/join' element={<JoinQuiz/>}></Route>
+           <Route path='/quiz-start' element={<QuizStart/>}></Route>
         </Routes>
       </BrowserRouter>
     </AuthProvider>

@@ -4,6 +4,7 @@ import { ApiError } from '../utils/ApiError.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
 import { generateMockQuestions } from '../services/ai.services.js';
 import options from 'sanitize-html';
+import crypto from "crypto";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
@@ -74,6 +75,7 @@ const generateQuizAI = asyncHandler(async (req, res) => {
         questionCount,
         questions: aiQuestions,
         status: "draft",
+        code: crypto.randomBytes(3).toString("hex").toUpperCase()
     });
 
     return res
@@ -105,6 +107,7 @@ const createQuiz = asyncHandler(async (req, res) => {
         difficulty: difficulty || "medium",
         timerMode: timerMode || "quiz",
         timerSeconds: timerSeconds || 600,
+        code: crypto.randomBytes(3).toString("hex").toUpperCase(),
         questions
     });
 
@@ -207,8 +210,8 @@ const joinQuizByCode = asyncHandler(async (req, res) => {
         throw new ApiError(404, "Quiz not found or not available");
     }
 
-    const safeQuestions = quiz.toObject();
-    safeQuestions.questions = safeQuestions.questions.map((q) => ({
+
+    const safeQuestions = quiz.questions.map(q => ({
         text: q.text,
         options: q.options
     }));
