@@ -201,21 +201,29 @@ const joinQuizByCode = asyncHandler(async (req, res) => {
     const quiz = await Quiz.findOne({
         code: req.params.code,
         status: "published"
-    });
+    }).lean();
 
     if (!quiz) {
         throw new ApiError(404, "Quiz not found or not available");
     }
 
-    const safeQuiz = quiz.toObject();
-    safeQuiz.questions = safeQuiz.questions.map((q) => ({
+    const safeQuestions = quiz.toObject();
+    safeQuestions.questions = safeQuestions.questions.map((q) => ({
         text: q.text,
         options: q.options
     }));
 
     return res
         .status(200)
-        .json(new ApiResponse(200, safeQuiz, "Quiz joined successfully"));
+        .json(new ApiResponse(200, {
+            _id: quiz._id,
+            title: quiz.title,
+            topic: quiz.topic,
+            difficulty: quiz.difficulty,
+            timerMode: quiz.timerMode,
+            timerSeconds: quiz.timerSeconds,
+            questions: safeQuestions
+        }, "Quiz joined successfully"));
 });
 
 
