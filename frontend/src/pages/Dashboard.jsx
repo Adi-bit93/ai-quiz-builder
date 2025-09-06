@@ -102,11 +102,11 @@ export default function Dashboard() {
     <div className="min-h-screen p-4 bg-gray-50 md:p-8">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between shadow-sm px-4 py-2 rounded-xl border gap-4 mb-8">
+          <h1 className="text-2xl mb-4 md:text-3xl font-bold text-gray-800">
             Organizer Dashboard
           </h1>
-          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+          <div className="flex flex-col sm:flex-row gap-3 w-full mb-6 sm:w-auto">
             {/* Create Quiz Button */}
             <button
               onClick={() => setShowModal(true)}
@@ -156,7 +156,7 @@ export default function Dashboard() {
                 logout();
                 navigate("/login");
               }}
-              className="w-full sm:w-auto px-5 py-2.5 bg-red-500 text-white rounded-xl hover:bg-red-600 transition shadow-sm"
+              className="mt-6 px-6 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600 transition"
             >
               Logout
             </button>
@@ -206,7 +206,7 @@ export default function Dashboard() {
                   >
                     {quiz.difficulty}
                   </span>
-                  <span className="text-gray-500">{quiz.questions.length} Qs</span>
+                  <span className="text-gray-500">{quiz.questions.length}Qs</span>
                   <button
                     className="px-3 py-1.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 text-xs transition w-full sm:w-auto"
                     onClick={() => navigate(`/quizzes/${quiz._id}`)}
@@ -228,8 +228,7 @@ export default function Dashboard() {
                       );
                       if (res.ok) {
                         setQuizzes((prev) =>
-                          prev.map((q) => q._id === quiz._id ? { ...q, published: true } : q
-                          )
+                          prev.map((q) => q._id === quiz._id ? { ...q, status: "published" } : q)
                         );
                       } else {
                         alert("Failed to publish quiz.");
@@ -238,8 +237,8 @@ export default function Dashboard() {
                       console.error("Publish quiz failed: ", error);
                     }
                   }}
-                    disabled={quiz.status}
-                    className={`px-4 py-2 rounded-lg transition ${quiz.status ? "bg-gray-400 text-white cursor-not-allowed" : "bg-green-500 text-white hover:bg-green-600"}`}>
+                    disabled={quiz.status === "published"}
+                    className={`px-4 py-2 rounded-lg transition ${quiz.status === "published" ? "bg-gray-400 text-white cursor-not-allowed" : "bg-green-500 text-white hover:bg-green-600"}`}>
                     {quiz.status === "published" ? "Published" : "Publish"}
                   </button>
                   <button

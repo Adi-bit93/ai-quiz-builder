@@ -72,10 +72,10 @@ export default function ViewQuiz() {
                         <span className="font-semibold">Difficulty: </span>{quiz.difficulty}
                     </p>
                     <p className="text-gray-600">
-                        <span className="font-semibold">Questions: </span>{" "}{quiz.questionCount}
+                        <span className="font-semibold">Questions: </span>{quiz.questionCount}
                     </p>
-                    <p className="text-gray-700"><span className="font-semibold">Status: </span>{" "}
-                        {quiz.status ? (
+                    <p className="text-gray-700"><span className="font-semibold">Status: </span>
+                        {quiz.status === "published" ? (
                             <span className="text-green-600 font-medium">Published</span>
                         ) : (
                             <span className="text-yellow-600 font-medium">Draft</span>
@@ -91,7 +91,7 @@ export default function ViewQuiz() {
                                 key={index}
                                 className="p-4 bg-gray-50 border rounded-xl shadow-sm">
                                 <h3 className="font-semibold mb-2">
-                                    Q{index + 1} : {q.question}
+                                    Q{index + 1} : {q.text}
                                 </h3>
                                 <ul className="space-y-1">
                                     {q.options.map((opt, i) => (
