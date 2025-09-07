@@ -10,7 +10,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 const generateQuizAI = asyncHandler(async (req, res) => {
-    const { topic, difficulty, questionCount } = req.body;
+    const { topic, difficulty, questionCount, timerSeconds } = req.body;
     const ownerId = req.user._id;
 
     if (!topic || !difficulty || !questionCount) {
@@ -73,6 +73,7 @@ const generateQuizAI = asyncHandler(async (req, res) => {
         topic,
         difficulty,
         questionCount,
+        timerSeconds,
         questions: aiQuestions,
         status: "draft",
         code: crypto.randomBytes(3).toString("hex").toUpperCase()
