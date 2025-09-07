@@ -11,6 +11,7 @@ import EditQuiz from './pages/EditQuiz';
 import QuizAI from './pages/QuizAI';
 import JoinQuiz from './pages/JoinQuiz';
 import QuizStart from './pages/QuizStart';
+import QuizResult from './pages/QuizResult';
 function App() {
   return (
     <AuthProvider>
@@ -35,6 +36,7 @@ function App() {
           </Route>
            <Route path='/join' element={<JoinQuiz/>}></Route>
            <Route path='/quiz-start' element={<QuizStart/>}></Route>
+           <Route path='/quiz-result' element={<QuizResult/>}></Route>
         </Routes>
       </BrowserRouter>
     </AuthProvider>

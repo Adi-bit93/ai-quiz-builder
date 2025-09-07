@@ -213,7 +213,8 @@ const joinQuizByCode = asyncHandler(async (req, res) => {
 
     const safeQuestions = quiz.questions.map(q => ({
         text: q.text,
-        options: q.options
+        options: q.options,
+        correctIndex: q.correctIndex
     }));
 
     return res
