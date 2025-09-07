@@ -106,7 +106,7 @@ const createQuiz = asyncHandler(async (req, res) => {
         questionCount,
         difficulty: difficulty || "medium",
         timerMode: timerMode || "quiz",
-        timerSeconds: timerSeconds || 600,
+        timerSeconds: timerSeconds || 10,
         code: crypto.randomBytes(3).toString("hex").toUpperCase(),
         questions
     });
