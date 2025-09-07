@@ -64,7 +64,7 @@ const QuizSchema = new mongoose.Schema(
         timerMode: {
             type: String, 
             enum: ["quiz", "per-question"],
-            default: "quiz"
+            default: "per-question"
         },
         timerSeconds: {
             type: Number,

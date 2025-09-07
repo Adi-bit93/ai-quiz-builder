@@ -174,6 +174,10 @@ export default function QuizAI() {
                     </div>
                 ))}
             </div>
+            <button
+                onClick={() => navigate("/dashboard")}
+                className="px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition mb-6">Back to Dashboard
+            </button>
         </div>
     );
 

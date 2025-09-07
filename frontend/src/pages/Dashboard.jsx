@@ -124,6 +124,46 @@ export default function Dashboard() {
             >
               + Create Quiz
             </button>
+            {showModal && (
+              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50 px-4">
+                <div className="bg-white rounded-xl p-6 shadow-lg w-full max-w-md">
+                  <h3 className="text-xl font-bold mb-6 text-gray-800">Choose Quiz Creation Method</h3>
+
+                  <div className="flex flex-col gap-4">
+                    {/* Manual Quiz */}
+                    <button
+                      onClick={() => {
+                        setShowModal(false);
+                        navigate("/quizzes/create"); // ✅ manual creation route
+                      }}
+                      className="w-full px-4 py-3 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition"
+                    >
+                      Create Manually
+                    </button>
+
+                    {/* AI Generated Quiz */}
+                    <button
+                      onClick={() => {
+                        setShowModal(false);
+                        navigate("/ai"); // ✅ AI creation route
+                      }}
+                      className="w-full px-4 py-3 bg-purple-500 text-white rounded-lg shadow hover:bg-purple-600 transition"
+                    >
+                      Generate with AI
+                    </button>
+                  </div>
+
+                  <button
+                    onClick={() => setShowModal(false)}
+                    className="mt-6 w-full px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+
+
             <button
               onClick={() => {
                 logout();
@@ -171,13 +211,12 @@ export default function Dashboard() {
 
                 <div className="flex flex-wrap justify-between items-center text-sm gap-2">
                   <span
-                    className={`px-2.5 py-1 rounded-lg text-white text-xs font-medium ${
-                      quiz.difficulty === "easy"
+                    className={`px-2.5 py-1 rounded-lg text-white text-xs font-medium ${quiz.difficulty === "easy"
                         ? "bg-green-500"
                         : quiz.difficulty === "medium"
-                        ? "bg-yellow-500"
-                        : "bg-red-500"
-                    }`}
+                          ? "bg-yellow-500"
+                          : "bg-red-500"
+                      }`}
                   >
                     {quiz.difficulty}
                   </span>
@@ -224,11 +263,10 @@ export default function Dashboard() {
                       }
                     }}
                     disabled={quiz.status === "published"}
-                    className={`flex-1 px-3 py-2 rounded-lg text-sm transition ${
-                      quiz.status === "published"
+                    className={`flex-1 px-3 py-2 rounded-lg text-sm transition ${quiz.status === "published"
                         ? "bg-gray-400 text-white cursor-not-allowed"
                         : "bg-green-500 text-white hover:bg-green-600"
-                    }`}
+                      }`}
                   >
                     {quiz.status === "published" ? "Published" : "Publish"}
                   </button>
@@ -237,11 +275,10 @@ export default function Dashboard() {
                 <div className="mt-3 flex flex-wrap gap-2">
                   <button
                     onClick={() => handleCopy(quiz)}
-                    className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition ${
-                      copiedQuizId === quiz._id
+                    className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition ${copiedQuizId === quiz._id
                         ? "bg-green-500 text-white hover:bg-green-600"
                         : "bg-indigo-500 text-white hover:bg-indigo-600"
-                    }`}
+                      }`}
                   >
                     {copiedQuizId === quiz._id ? "Copied ✓" : "Copy Code"}
                   </button>
