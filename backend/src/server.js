@@ -40,12 +40,13 @@ io.on("connection", (socket) => {
         socket.join(quizCode);
         console.log(`${name} joined lobby ${quizCode}`);
         
+        io.to(quizCode).emit("participantJoined", {
+            id : socket.id,
+            name,
+        });
+
     });
 
-    io.to(quizCode).emit("participantJoined", {
-        id : socket.id,
-        name,
-    });
 
     socket.on("startQuiz", ({ quizCode }) => {
         io.to(quizCode).emit("quizStarted");

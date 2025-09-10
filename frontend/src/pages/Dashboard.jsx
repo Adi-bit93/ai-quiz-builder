@@ -16,6 +16,7 @@ export default function Dashboard() {
 
   // Fetch profile
   useEffect(() => {
+     if (!getToken()) return;
     (async () => {
       try {
         const res = await apiWithAutoRefresh(

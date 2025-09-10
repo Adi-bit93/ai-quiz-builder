@@ -12,7 +12,7 @@ export default function JoinQuiz() {
             const res = await apiRequest(`/quizzes/join/${code}`);
             if(res.ok) {
                 const json = await res.json();
-                navigate("/quiz-start", { state: { participant: name, quiz: json.data } });
+                navigate("/lobby", { state: { participant: name, quiz: json.data } });
             } else {
                 alert("Invalid code or quiz not available.");
             }
