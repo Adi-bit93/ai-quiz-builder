@@ -227,6 +227,7 @@ const joinQuizByCode = asyncHandler(async (req, res) => {
             difficulty: quiz.difficulty,
             timerMode: quiz.timerMode,
             timerSeconds: quiz.timerSeconds,
+            code: quiz.code,
             questions: safeQuestions
         }, "Quiz joined successfully"));
 });
