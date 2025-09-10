@@ -7,6 +7,7 @@ import http from "http";
 import { Server } from "socket.io";
 import { log } from 'console';
 
+
 dotenv.config({
     path: './env'
 })
@@ -35,9 +36,25 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
     console.log(" A user connected: ",socket.id);
 
-    socket.on("disconnect", () => {
-        console.log("User disconnected:", socket.id); 
+    socket.on("joinLobby", ({quizCode, name}) => {
+        socket.join(quizCode);
+        console.log(`${name} joined lobby ${quizCode}`);
+        
     });
+
+    io.to(quizCode).emit("participantJoined", {
+        id : socket.id,
+        name,
+    });
+
+    socket.on("startQuiz", ({ quizCode }) => {
+        io.to(quizCode).emit("quizStarted");
+    });
+
+    socket.on("disconnect", () => {
+        console.log("User disconnected:", socket.id);
+        
+    })
 });
 
 server.listen(PORT, () => {
