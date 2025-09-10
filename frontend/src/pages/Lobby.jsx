@@ -41,15 +41,25 @@ export default function Lobby() {
     };
 
     return (
-         <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-6">
-            <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-md">
-                <h1 className="text-2xl font-bold mb-4 text-center">{quiz.title} Lobby</h1>
-                <p className="mb-4 text-gray-600 text-center">Waiting for organizer to start...</p>
+         <div className="min-h-screen flex flex-col items-center justify-center bg-gray-950 p-6 font-sans">
+            <div className="bg-gray-800 p-8 rounded-3xl shadow-2xl  max-w-md border border-gray-700">
+                <h1 className="text-3xl font-extrabold mb-2 text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-indigo-600">
+                    {quiz.title} Lobby
+                </h1>
+                <p className="mb-8 text-gray-400 text-center text-sm">Waiting for the organizer to start...</p>
 
-                <h2 className="font-semibold mb-2">Participants:</h2>
-                <ul className="mb-6">
+                <div className="bg-gray-700 p-6 rounded-2xl mb-6">
+                    <p className="text-5xl font-bold text-center text-white">{participants.length}</p>
+                    <p className="text-gray-400 text-center mt-2">Participants Joined</p>
+                </div>
+
+                <h2 className="font-semibold text-white mb-3 text-lg">Participants:</h2>
+                <ul className="mb-6 bg-gray-700 p-4 rounded-xl space-y-2 max-h-48 overflow-y-auto">
                     {participants.map((p) => (
-                        <li key={p.id} className="border-b py-2">{p.name}</li>
+                        <li key={p.id} className="text-gray-200 py-2 px-3 rounded-lg transition-colors duration-200">
+                            <span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-2 animate-pulse"></span>
+                            {p.name}
+                        </li>
                     ))}
                 </ul>
 
@@ -57,7 +67,7 @@ export default function Lobby() {
                 {participant === "Organizer" && (
                     <button
                         onClick={handleStartQuiz}
-                        className="w-full bg-green-500 text-white py-3 rounded-lg hover:bg-green-600 transition"
+                        className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white font-bold py-3 px-4 rounded-full shadow-lg hover:from-green-600 hover:to-green-700 transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
                     >
                         Start Quiz
                     </button>
