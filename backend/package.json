@@ -4,7 +4,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon -r dotenv/config --experimental-json-modules src/index.js"
+    "dev": "nodemon -r dotenv/config --experimental-json-modules src/server.js"
   },
   "keywords": [
     "javascript",
@@ -27,6 +27,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.17.1",
     "sanitize-html": "^2.17.0",
+    "socket.io": "^4.8.1",
     "zod": "^4.0.17"
   },
   "devDependencies": {
