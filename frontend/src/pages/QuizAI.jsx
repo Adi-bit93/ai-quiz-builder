@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import { apiWithAutoRefresh } from "../lib/api.js";
 import { Bot, User, Send } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 
 export default function QuizAI() {
@@ -11,6 +12,7 @@ export default function QuizAI() {
     ]);
     const [input, setInput] = useState("");
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     // Drop this next to your component (outside) so it's not recreated on each render
     function parseInput(input) {

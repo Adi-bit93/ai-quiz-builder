@@ -11,7 +11,7 @@ export default function QuizStart() {
   const [currentQ, setCurrentQ] = useState(0);
   const [selected, setSelected] = useState(null);
   const [answers, setAnswers] = useState([]);
-  const [timeLeft, setTimeLeft] = useState(quiz?.timerSeconds || 10);
+  const [timeLeft, setTimeLeft] = useState(quiz?.timerSeconds || 20);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Timer effect
@@ -46,7 +46,7 @@ export default function QuizStart() {
           ? currentQuestion.options[currentQuestion.correctIndex] 
           : null,
         isCorrect: selected !== null && selected === currentQuestion.correctIndex,
-        timeUsed: (quiz.timerSeconds || 10) - timeLeft,
+        timeUsed: (quiz.timerSeconds || 20) - timeLeft,
         wasAnswered: selected !== null
       };
 
@@ -57,7 +57,7 @@ export default function QuizStart() {
         setAnswers(updatedAnswers);
         setCurrentQ((prev) => prev + 1);
         setSelected(null);
-        setTimeLeft(quiz.timerSeconds || 10);
+        setTimeLeft(quiz.timerSeconds || 20);
         setIsSubmitting(false);
       } else {
         // Calculate final score
