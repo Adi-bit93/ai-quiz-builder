@@ -1,13 +1,11 @@
-import express from 'express';
 import dotenv from 'dotenv';
-import cors from 'cors';
 import connectDB from './db/index.js';
 import {app} from './app.js'
 import http from "http";
 import { Server } from "socket.io";
-import { log } from 'console';
+ 
 
-
+  
 dotenv.config({
     path: './env'
 })
