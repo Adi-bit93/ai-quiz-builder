@@ -47,6 +47,36 @@ io.on("connection", (socket) => {
 
     });
 
+    // --- LEADERBOARD EVENTS ---
+    if (!global.activeLeaderboards) {
+        global.activeLeaderboards = {}; //persist across sockets
+    }
+
+    socket.on("joinLeaderboard", ({ quizId, name}) => {
+        socket.join(quizId);
+
+        if(!global.activeLeaderboards[quizId]) {
+            global.activeLeaderboards[quizId] = [];
+        }
+
+        global.activeLeaderboards[quizId].push({name, score: 0});
+        io.to(quizId).emit(
+            "leaderboardUpdate",
+            global.activeLeaderboards[quizId]
+        );
+    });
+
+    socket.on("updateScore", ({quizId, name, score }) => {
+        const leaderboard = global.activeLeaderboards[quizId];
+        if(leaderboard) {
+            const player = leaderboard.find((p) => p.name === name);
+            if (player) player.score = score;
+
+            leaderboard.sort((a, b) => b.score - a.score);
+            io.to(quizId).emit("leaderboardUpdate", leaderboard);
+        }
+    });
+
 
     socket.on("startQuiz", ({ quizCode }) => {
         io.to(quizCode).emit("quizStarted");
