@@ -31,6 +31,11 @@ const io = new Server(server, {
     }
 });
 
+ // --- LEADERBOARD EVENTS ---
+    if (!global.activeLeaderboards) {
+        global.activeLeaderboards = {}; //persist across sockets
+    }
+
 // Socket.IO events
 
 io.on("connection", (socket) => {
@@ -47,33 +52,32 @@ io.on("connection", (socket) => {
 
     });
 
-    // --- LEADERBOARD EVENTS ---
-    if (!global.activeLeaderboards) {
-        global.activeLeaderboards = {}; //persist across sockets
-    }
+   
+    socket.on("joinLeaderboard", ({ quizCode, name}) => {
+        socket.join(quizCode);
 
-    socket.on("joinLeaderboard", ({ quizId, name}) => {
-        socket.join(quizId);
-
-        if(!global.activeLeaderboards[quizId]) {
-            global.activeLeaderboards[quizId] = [];
+        if(!global.activeLeaderboards[quizCode]) {
+            global.activeLeaderboards[quizCode] = [];
         }
 
-        global.activeLeaderboards[quizId].push({name, score: 0});
-        io.to(quizId).emit(
+        const exists = global.activeLeaderboards[quizCode].some(p => p.name === name);
+        if(!exists){
+            global.activeLeaderboards[quizCode].push({name, score: 0});
+        }
+        io.to(quizCode).emit(
             "leaderboardUpdate",
-            global.activeLeaderboards[quizId]
+            global.activeLeaderboards[quizCode]
         );
     });
 
-    socket.on("updateScore", ({quizId, name, score }) => {
-        const leaderboard = global.activeLeaderboards[quizId];
+    socket.on("updateScore", ({quizCode, name, score }) => {
+        const leaderboard = global.activeLeaderboards[quizCode];
         if(leaderboard) {
             const player = leaderboard.find((p) => p.name === name);
             if (player) player.score = score;
 
             leaderboard.sort((a, b) => b.score - a.score);
-            io.to(quizId).emit("leaderboardUpdate", leaderboard);
+            io.to(quizCode).emit("leaderboardUpdate", leaderboard);
         }
     });
 
