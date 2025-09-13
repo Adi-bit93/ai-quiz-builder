@@ -48,29 +48,29 @@ io.on("connection", (socket) => {
 
     });
 
-   
-    socket.on("joinLeaderboard", ({ quizCode, name}) => {
+    socket.on("joinLeaderboard", ({ quizCode, name, role}) => {
         socket.join(quizCode);
 
         if(!global.activeLeaderboards[quizCode]) {
             global.activeLeaderboards[quizCode] = [];
         }
 
-        const exists = global.activeLeaderboards[quizCode].some(p => p.name === name);
-        if(!exists){
+        if (role === "player") {
             global.activeLeaderboards[quizCode].push({name, score: 0});
         }
-        io.to(quizCode).emit(
-            "leaderboardUpdate",
-            global.activeLeaderboards[quizCode]
-        );
+
+        if (role === "organizer") {
+            socket.emit("leaderboardUpdate", global.activeLeaderboards[quizCode])
+        }
     });
 
     socket.on("updateScore", ({quizCode, name, score }) => {
         const leaderboard = global.activeLeaderboards[quizCode];
         if(leaderboard) {
-            const player = leaderboard.find((p) => p.name === name);
-            if (player) player.score = score;
+           const player = leaderboard.find((p) => p.name === name);
+           if(player) {
+            player.score += score;
+           }
 
             leaderboard.sort((a, b) => b.score - a.score);
             io.to(quizCode).emit("leaderboardUpdate", leaderboard);
