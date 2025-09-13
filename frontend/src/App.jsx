@@ -13,6 +13,7 @@ import JoinQuiz from './pages/JoinQuiz';
 import QuizStart from './pages/QuizStart';
 import QuizResult from './pages/QuizResult';
 import Lobby from './pages/Lobby';
+import Leaderboard from './pages/Leaderboard';
 function App() {
   return (
     <AuthProvider>
@@ -39,6 +40,7 @@ function App() {
            <Route path='/lobby' element={<Lobby/>}></Route>
            <Route path='/quiz-start' element={<QuizStart/>}></Route>
            <Route path='/quiz-result' element={<QuizResult/>}></Route>
+           <Route path='/leaderboard' element={<Leaderboard/>}></Route>
         </Routes>
       </BrowserRouter>
     </AuthProvider>

@@ -4,27 +4,31 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const socket = io("http://localhost:5000", { transports: ["websocket"] });
 
-export default function Leaderboard({ quizCode, playerName }) {
-    const [players, setPlayers] = useState([]);
+export default function Leaderboard({ quizCode, organizerName }) {
+    const [leaderboard, setLeaderboard] = useState([]);
 
     useEffect(() => {
-        socket.emit("joinLeaderboard", { quizCode, name: playerName });
+        socket.emit("joinLeaderboard", {
+            quizCode, 
+            name: organizerName,
+            role: "organizer"
+        })
 
-        socket.on("leaderboardUpdate", (updatedPlayers) => {
-            setPlayers(updatedPlayers);
-        });
+        socket.on("leaderboardUpdate", (data) => {
+            setLeaderboard([...data])
+        })
 
         return () => {
             socket.off("leaderboardUpdate");
         }
-    }, [quizCode, playerName]);
+    }, [quizCode, organizerName]);
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black text-white flex flex-col items-center p-6">
             <h1 className="text-4xl font-extrabold mb-6 text-center bg-gradient-to-r from-yellow-400 to-pink-500 text-transparent bg-clip-text">Live Leaderboard</h1>
 
             <div className="w-full max-w-2xl bg-gray-800 rounded-2xl shadow-2xl p-4 sm:p-6">
-                <AnimatePresence>{players.map((player, index) => (
+                <AnimatePresence>{leaderboard.map((player, index) => (
                     <motion.dev
                         key={index}
                         initial={{ opacity: 0, y: -20 }}

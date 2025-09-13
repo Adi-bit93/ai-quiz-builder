@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { io } from "socket.io-client";
+
+const socket = io("http://localhost:5000", {
+  withCredentials: true,
+});
 
 export default function QuizStart() {
   const { state } = useLocation();
@@ -13,6 +18,8 @@ export default function QuizStart() {
   const [answers, setAnswers] = useState([]);
   const [timeLeft, setTimeLeft] = useState(quiz?.timerSeconds || 20);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [score, setScore] = useState(0);
 
   // Timer effect
   useEffect(() => {
@@ -34,6 +41,26 @@ export default function QuizStart() {
     
     try {
       const currentQuestion = quiz.questions[currentQ];
+
+      const isCorrect = selected !== null && selected === currentQuestion.correctIndex;
+      const timeUsed = (quiz.timerSeconds || 20) - timeLeft
+
+      let updatedScore = score;
+      if(isCorrect){
+        const baseScore = 10;
+        const speedBonus = Math.max(0, timeLeft);
+        updatedScore += baseScore + speedBonus;
+      } else {
+        const penalty = 5;
+        updatedScore -= penalty;
+      }
+      setScore(updatedScore);
+
+      socket.emit("updateScore", {
+        quizCode: quiz.code,
+        name: participant,
+        score: updatedScore,
+      })
       
       // Build answer object with comprehensive data
       const answerData = {
@@ -45,8 +72,8 @@ export default function QuizStart() {
         correctAnswer: currentQuestion.correctIndex !== undefined 
           ? currentQuestion.options[currentQuestion.correctIndex] 
           : null,
-        isCorrect: selected !== null && selected === currentQuestion.correctIndex,
-        timeUsed: (quiz.timerSeconds || 20) - timeLeft,
+        isCorrect,
+        timeUsed,
         wasAnswered: selected !== null
       };
 
@@ -60,23 +87,16 @@ export default function QuizStart() {
         setTimeLeft(quiz.timerSeconds || 20);
         setIsSubmitting(false);
       } else {
-        // Calculate final score
-        const finalScore = updatedAnswers.reduce((total, answer) => 
-          total + (answer.isCorrect ? 1 : 0), 0
-        );
-
-        // Navigate to results
         navigate("/quiz-result", {
-          state: { 
-            participant, 
-            quiz, 
+          state: {
+            participant,
+            quiz,
             answers: updatedAnswers,
-            score: finalScore,
             totalQuestions: quiz.questions.length,
             completedAt: new Date().toISOString(),
-            timeTaken: updatedAnswers.reduce((total, answer) => total + answer.timeUsed, 0)
+            timeTaken: updatedAnswers.reduce((total, a) => total + a.timeUsed, 0)
           },
-        });
+        })
       }
     } catch (error) {
       console.error("Error processing answer:", error);

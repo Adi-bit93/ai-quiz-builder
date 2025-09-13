@@ -8,21 +8,13 @@ export default function QuizResult() {
   
   const { 
     quiz, 
-    answers, 
-    score, 
-    totalQuestions, 
+    answers = [], 
+    score: stateScore, 
+    totalQuestions = 0, 
     participant, 
     completedAt, 
     timeTaken 
-  } = location.state || { 
-    quiz: null, 
-    answers: [], 
-    score: 0, 
-    totalQuestions: 0,
-    participant: null,
-    completedAt: null,
-    timeTaken: 0
-  };
+  } = location.state || {};
 
   if (!quiz) {
     return (
@@ -43,11 +35,13 @@ export default function QuizResult() {
   }
 
   // Calculate statistics
-  const percentage = Math.round((score / quiz.questions.length) * 100);
-  const correctAnswers = score;
+  const calculatedScore = stateScore !==undefined ? stateScore : answers.filter((a) => a.isCorrect).length;
+
+  const percentage = Math.round((calculatedScore / quiz.questions.length) * 100);
+  const correctAnswers = calculatedScore;
   const incorrectAnswers = answers.filter(a => a.wasAnswered && !a.isCorrect).length;
   const unansweredQuestions = answers.filter(a => !a.wasAnswered).length;
-  const averageTimePerQuestion = timeTaken / quiz.questions.length;
+  const averageTimePerQuestion =quiz.questions.length ? timeTaken / quiz.questions.length : 0;
 
   // Performance evaluation
   const getPerformanceData = (percentage) => {
@@ -104,7 +98,7 @@ export default function QuizResult() {
   const handleShareResults = async () => {
     const shareData = {
       title: `Quiz Results: ${quiz.title}`,
-      text: `I scored ${score}/${quiz.questions.length} (${percentage}%) on "${quiz.title}"!`,
+      text: `I scored ${calculatedScore}/${quiz.questions.length} (${percentage}%) on "${quiz.title}"!`,
       url: window.location.href
     };
 
@@ -151,7 +145,7 @@ export default function QuizResult() {
             {/* Main Score Display */}
             <div className="flex justify-center items-center gap-6 mb-6">
               <div className="text-center">
-                <div className="text-5xl font-bold text-blue-600 mb-1">{score}</div>
+                <div className="text-5xl font-bold text-blue-600 mb-1">{calculatedScore}</div>
                 <div className="text-sm text-gray-600 font-medium">Correct</div>
               </div>
               <div className="text-3xl text-gray-400">/</div>
