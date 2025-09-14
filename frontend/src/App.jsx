@@ -40,7 +40,10 @@ function App() {
            <Route path='/lobby' element={<Lobby/>}></Route>
            <Route path='/quiz-start' element={<QuizStart/>}></Route>
            <Route path='/quiz-result' element={<QuizResult/>}></Route>
-           <Route path='/leaderboard' element={<Leaderboard/>}></Route>
+           <Route path='/leaderboard' element={<Leaderboard 
+           quizCode
+           participant
+           />}></Route>
         </Routes>
       </BrowserRouter>
     </AuthProvider>

@@ -27,10 +27,10 @@ export default function Lobby() {
         socket.on("quizStarted", () => {
             if (role === "participant") {
                 // only participants go to quiz-start
-                navigate("/quiz-start", { state: { participant, quiz, role } });
+                navigate("/quiz-start", { state: {name: participant, quiz} });
             } else if (role === "organizer") {
                 // organizer stays here or later go to leaderboard
-                console.log("Organizer stays in lobby/leaderboard");
+                navigate("/leaderboard", {state : { quiz }})
             }
         });
 

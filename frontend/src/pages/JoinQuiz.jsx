@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { apiRequest } from "../lib/api.js";
 import { useNavigate } from "react-router-dom";
+import { socket } from "../lib/socket.js";
 
 export default function JoinQuiz() {
     const [code, setCode] = useState("");
@@ -18,12 +19,19 @@ export default function JoinQuiz() {
             const res = await apiRequest(`/quizzes/join/${code}`);
             if (res.ok) {
                 const json = await res.json();
-                navigate("/lobby", { 
-                    state: { 
-                        participant: name, 
-                        quiz: json.data, 
-                        role 
-                    } 
+
+                socket.emit("joinLeaderboard", {
+                    quizCode: code,
+                    name,
+                    role
+                });
+
+                navigate("/lobby", {
+                    state: {
+                        participant: name,
+                        quiz: json.data,
+                        role
+                    }
                 });
             } else {
                 alert("Invalid code or quiz not available.");
@@ -62,22 +70,20 @@ export default function JoinQuiz() {
                     <button
                         type="button"
                         onClick={() => setRole("participant")}
-                        className={`px-4 py-2 rounded-lg font-semibold transition ${
-                            role === "participant"
+                        className={`px-4 py-2 rounded-lg font-semibold transition ${role === "participant"
                                 ? "bg-blue-500 text-white shadow-md"
                                 : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                        }`}
+                            }`}
                     >
                         Participant
                     </button>
                     <button
                         type="button"
                         onClick={() => setRole("organizer")}
-                        className={`px-4 py-2 rounded-lg font-semibold transition ${
-                            role === "organizer"
+                        className={`px-4 py-2 rounded-lg font-semibold transition ${role === "organizer"
                                 ? "bg-green-500 text-white shadow-md"
                                 : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                        }`}
+                            }`}
                     >
                         Organizer
                     </button>

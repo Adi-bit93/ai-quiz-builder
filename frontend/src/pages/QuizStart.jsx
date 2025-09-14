@@ -46,12 +46,15 @@ export default function QuizStart() {
       const timeUsed = (quiz.timerSeconds || 20) - timeLeft
 
       let updatedScore = score;
+      let deltaScore = 0;
       if(isCorrect){
         const baseScore = 10;
         const speedBonus = Math.max(0, timeLeft);
-        updatedScore += baseScore + speedBonus;
+        deltaScore = baseScore + speedBonus;
+        updatedScore += deltaScore;
       } else {
         const penalty = 5;
+        deltaScore = -penalty;
         updatedScore -= penalty;
       }
       setScore(updatedScore);
@@ -59,7 +62,7 @@ export default function QuizStart() {
       socket.emit("updateScore", {
         quizCode: quiz.code,
         name: participant,
-        score: updatedScore,
+        score: deltaScore,
       })
       
       // Build answer object with comprehensive data
@@ -94,7 +97,8 @@ export default function QuizStart() {
             answers: updatedAnswers,
             totalQuestions: quiz.questions.length,
             completedAt: new Date().toISOString(),
-            timeTaken: updatedAnswers.reduce((total, a) => total + a.timeUsed, 0)
+            timeTaken: updatedAnswers.reduce((total, a) => total + a.timeUsed, 0),
+            finalScore: updatedScore,
           },
         })
       }
