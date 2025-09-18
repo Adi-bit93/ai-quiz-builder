@@ -52,14 +52,14 @@ export default function QuizAI() {
         // If still no topic, remove boilerplate words/phrases to reveal what's left
         if (!topic) {
             topic = lower
-                // remove “20 questions” phrases
+                // remove "20 questions" phrases
                 .replace(/\b\d+\s*(?:questions?|qs?)\b/gi, "")
                 // remove common filler verbs and quiz words
                 .replace(/\b(give me|generate|create|make|build)\b/gi, "")
                 .replace(/\b(quiz|questions?)\b/gi, "")
                 // remove difficulty words
                 .replace(/\b(easy|medium|hard)\b/gi, "")
-                // remove prepositions that don’t add meaning once others are stripped
+                // remove prepositions that don't add meaning once others are stripped
                 .replace(/\b(on|about|regarding|with|for|of)\b/gi, "")
                 // keep tech punctuation like +, #, . for C++, C#, Node.js
                 .replace(/[^\w\s\+#\.]/g, "")
@@ -126,65 +126,99 @@ export default function QuizAI() {
     };
 
     return (
-        <div className="min-h-screen flex flex-col items-center bg-pink-50">
-            {/* Search Bar */}
-            <div className="w-full max-w-3xl p-6">
-                <div className="flex items-center bg-white shadow-md rounded-full px-4 py-2">
-                    <input
-                        type="text"
-                        placeholder="Ask anything..."
-                        className="flex-1 px-2 py-2 text-gray-800 focus:outline-none rounded-full"
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-                        disabled={loading}
-                    />
-                    <button
-                        onClick={sendMessage}
-                        disabled={loading}
-                        className="ml-2 p-2 bg-pink-500 hover:bg-pink-600 text-white rounded-full transition"
-                    >
-                        <Send className="w-5 h-5" />
-                    </button>
+        <div className="h-screen bg-gradient-to-br from-purple-50 to-blue-50 flex flex-col overflow-hidden">
+            <div className="flex-1 max-w-4xl mx-auto w-full flex flex-col p-4">
+                {/* Header */}
+                <div className="bg-white rounded-xl shadow-lg p-4 mb-4">
+                    <div className="flex items-center justify-between">
+                        <h1 className="text-xl font-bold text-gray-800">AI Quiz Generator</h1>
+                        <button
+                            onClick={() => navigate("/dashboard")}
+                            className="px-4 py-2 bg-gray-500 text-white text-sm rounded-lg hover:bg-gray-600 transition"
+                        >
+                            Back to Dashboard
+                        </button>
+                    </div>
                 </div>
-            </div>
 
-            {/* Messages Area */}
-            <div className="w-full max-w-3xl flex-1 overflow-y-auto p-6 space-y-4">
-                {messages.map((msg, idx) => (
-                    <div
-                        key={idx}
-                        className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"
-                            }`}
-                    >
-                        {msg.sender === "bot" && (
-                            <div className="flex items-start space-x-2">
-                                <Bot className="w-6 h-6 text-pink-500" />
-                                <div className="bg-white shadow rounded-2xl px-4 py-2 text-gray-800 max-w-[75%] whitespace-pre-line">
-                                    {msg.text}
-                                </div>
+                {/* Messages Area */}
+                <div className="flex-1 bg-white rounded-xl shadow-lg p-4 mb-4 overflow-hidden flex flex-col">
+                    <div className="flex-1 overflow-y-auto space-y-3 pr-2">
+                        {messages.map((msg, idx) => (
+                            <div
+                                key={idx}
+                                className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
+                            >
+                                {msg.sender === "bot" && (
+                                    <div className="flex items-start space-x-2 max-w-[80%]">
+                                        <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center">
+                                            <Bot className="w-5 h-5 text-white" />
+                                        </div>
+                                        <div className="bg-gray-100 rounded-xl px-4 py-2 text-gray-800 text-sm whitespace-pre-line">
+                                            {msg.text}
+                                        </div>
+                                    </div>
+                                )}
+                                {msg.sender === "user" && (
+                                    <div className="flex items-start space-x-2 max-w-[80%]">
+                                        <div className="bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-xl px-4 py-2 text-sm whitespace-pre-line">
+                                            {msg.text}
+                                        </div>
+                                        <div className="flex-shrink-0 w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                                            <User className="w-5 h-5 text-gray-600" />
+                                        </div>
+                                    </div>
+                                )}
                             </div>
-                        )}
-                        {msg.sender === "user" && (
-                            <div className="flex items-start space-x-2">
-                                <div className="bg-pink-500 text-white rounded-2xl px-4 py-2 max-w-[75%] whitespace-pre-line">
-                                    {msg.text}
+                        ))}
+                        {loading && (
+                            <div className="flex justify-start">
+                                <div className="flex items-start space-x-2">
+                                    <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center">
+                                        <Bot className="w-5 h-5 text-white" />
+                                    </div>
+                                    <div className="bg-gray-100 rounded-xl px-4 py-2">
+                                        <div className="flex space-x-1">
+                                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></div>
+                                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }}></div>
+                                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <User className="w-6 h-6 text-gray-600" />
                             </div>
                         )}
                     </div>
-                ))}
+                </div>
+
+                {/* Input Area */}
+                <div className="bg-white rounded-xl shadow-lg p-4">
+                    <div className="flex items-center gap-2">
+                        <input
+                            type="text"
+                            placeholder="Ask me to generate a quiz... (e.g., 'Create 10 easy questions about JavaScript')"
+                            className="flex-1 px-4 py-2 bg-gray-50 text-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                            value={input}
+                            onChange={(e) => setInput(e.target.value)}
+                            onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+                            disabled={loading}
+                        />
+                        <button
+                            onClick={sendMessage}
+                            disabled={loading || !input.trim()}
+                            className={`p-2 rounded-lg transition-all duration-200 ${
+                                loading || !input.trim()
+                                    ? "bg-gray-300 cursor-not-allowed"
+                                    : "bg-gradient-to-r from-purple-500 to-blue-500 hover:shadow-lg transform hover:scale-105"
+                            }`}
+                        >
+                            <Send className="w-5 h-5 text-white" />
+                        </button>
+                    </div>
+                    <p className="text-xs text-gray-500 mt-2">
+                        Example: "Generate 15 medium questions about React" or "Make a hard quiz on data structures with 20 questions"
+                    </p>
+                </div>
             </div>
-            <button
-                onClick={() => navigate("/dashboard")}
-                className="px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition mb-6">Back to Dashboard
-            </button>
         </div>
     );
-
-
-
 }
-
-

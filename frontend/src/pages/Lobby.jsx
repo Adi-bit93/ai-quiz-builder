@@ -9,14 +9,17 @@ export default function Lobby() {
   const navigate = useNavigate();
 
   // Correct destructuring
-  const { quiz, participant, role,  } = location.state || {};
-  const quizCode = quiz?.quizCode; // ✅ safely extract quizCode
+  const { quiz, participant, role, quizCode  } = location.state || {};
+ // const quizCode = quiz?.quizCode; // ✅ safely extract quizCode
   const name = participant;        // ✅ rename for clarity
+  const title = quiz?.data?.title;       // ✅ rename for clarity
+
 
   const [participants, setParticipants] = useState([]);
 
   useEffect(() => {
-    console.log("Lobby state:", { quizCode, name, role });
+    console.log("Quiz Data: ",{quiz})
+    console.log("Lobby state:", { quizCode, name, role, title });
 
     if (!quizCode || !name || !role) {
       navigate("/"); // if someone lands here by mistake
@@ -36,7 +39,7 @@ export default function Lobby() {
       if (role === "organizer") {
         navigate("/leaderboard", { state: { quizCode, organizerName: name } });
       } else {
-        navigate("/quiz-start", { state: { quizCode, name } });
+        navigate("/quiz-start", { state: { quizCode, name, quiz} });
       }
     });
 
@@ -55,7 +58,7 @@ export default function Lobby() {
         <div className="min-h-screen flex flex-col items-center justify-center bg-gray-950 p-6 font-sans">
             <div className="bg-gray-800 p-8 rounded-3xl shadow-2xl max-w-md border border-gray-700 w-full">
                 <h1 className="text-3xl font-extrabold mb-2 text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-indigo-600">
-                    {quiz?.title} Lobby
+                    {title} Lobby
                 </h1>
                 <p className="mb-8 text-gray-400 text-center text-sm">
                     Waiting for the organizer to start...

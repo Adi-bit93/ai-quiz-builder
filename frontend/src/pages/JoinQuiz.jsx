@@ -24,7 +24,7 @@ export default function JoinQuiz() {
       }
 
       // 2️⃣ fetch full quiz details
-      const fullQuizRes = await apiRequest(`/quizzes/${code}`);
+      const fullQuizRes = await apiRequest(`/quizzes/code/${code}`);
       if (!fullQuizRes.ok) {
         alert("Could not fetch quiz details.");
         return;
@@ -44,6 +44,7 @@ export default function JoinQuiz() {
         state: {
           participant: name,
           quiz, // ✅ send full quiz object (with title & questions)
+          quizCode: code,
           role,
         },
       });
