@@ -5,45 +5,51 @@ import { io } from "socket.io-client";
 const socket = io("http://localhost:5000", { withCredentials: true });
 
 export default function Lobby() {
-    const location = useLocation();
-    const { participant, quiz, role } = location.state || {};
-    const navigate = useNavigate();
-    const [participants, setParticipants] = useState([]);
+   const location = useLocation();
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        if (!quiz || !participant || !role) return;
+  // Correct destructuring
+  const { quiz, participant, role,  } = location.state || {};
+  const quizCode = quiz?.quizCode; // ✅ safely extract quizCode
+  const name = participant;        // ✅ rename for clarity
 
-        // join socket room
-        socket.emit("joinLobby", { quizCode: quiz.code, name: participant, role });
+  const [participants, setParticipants] = useState([]);
 
-        socket.on("participantJoined", (data) => {
-            setParticipants((prev) => {
-                if (prev.find((p) => p.id === data.id)) return prev;
-                return [...prev, data];
-            });
-        });
+  useEffect(() => {
+    console.log("Lobby state:", { quizCode, name, role });
 
-        // listen for quiz start
-        socket.on("quizStarted", () => {
-            if (role === "participant") {
-                // only participants go to quiz-start
-                navigate("/quiz-start", { state: {name: participant, quiz} });
-            } else if (role === "organizer") {
-                // organizer stays here or later go to leaderboard
-                navigate("/leaderboard", {state : { quiz }})
-            }
-        });
+    if (!quizCode || !name || !role) {
+      navigate("/"); // if someone lands here by mistake
+      return;
+    }
 
-        return () => {
-            socket.off("participantJoined");
-            socket.off("quizStarted");
-        };
+    // join lobby
+    socket.emit("joinLobby", { quizCode, name, role });
 
-    }, [quiz, participant, role, navigate]);
+    // update participants
+    socket.on("updateParticipants", (list) => {
+      setParticipants(list);
+    });
 
-    const handleStartQuiz = () => {
-        socket.emit("startQuiz", { quizCode: quiz.code });
+    // when quiz starts
+    socket.on("quizStarted", ({ quizCode }) => {
+      if (role === "organizer") {
+        navigate("/leaderboard", { state: { quizCode, organizerName: name } });
+      } else {
+        navigate("/quiz-start", { state: { quizCode, name } });
+      }
+    });
+
+    return () => {
+      socket.off("updateParticipants");
+      socket.off("quizStarted");
     };
+  }, [quizCode, name, role, navigate]);
+
+  // only organizer sees start button
+  const handleStartQuiz = () => {
+    socket.emit("startQuiz", { quizCode });
+  };
 
     return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-gray-950 p-6 font-sans">
