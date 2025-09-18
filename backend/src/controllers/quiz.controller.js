@@ -200,6 +200,26 @@ const deleteQuiz = asyncHandler(async (req, res) => {
         .status(200)
         .json(new ApiResponse(200, {}, "Quiz deleted successfuly"))
 });
+const getQuizByCode = asyncHandler(async (req, res) => {
+   try {
+     const quiz = await Quiz.findOne({
+         code: req.params.code,
+         status: "published"
+     })
+ 
+     if (!quiz) {
+         throw new ApiError(404, "Quiz not found")
+     }
+ 
+     return res
+         .status(200)
+         .json(new ApiResponse(201, quiz, "Quiz fetched succefully"))
+ 
+   } catch (error) {
+        res.status(500)
+            .json(new ApiResponse(500, {}, error.message));
+   }
+})
 
 const joinQuizByCode = asyncHandler(async (req, res) => {
     const quiz = await Quiz.findOne({
@@ -241,6 +261,7 @@ export {
     updateQuiz,
     publishQuiz,
     deleteQuiz,
+    getQuizByCode,
     joinQuizByCode,
 }
 

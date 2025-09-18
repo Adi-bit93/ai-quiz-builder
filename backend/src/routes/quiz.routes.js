@@ -7,7 +7,8 @@ import {
     publishQuiz,
     deleteQuiz,
     joinQuizByCode,
-    generateQuizAI
+    generateQuizAI,
+    getQuizByCode
 } from '../controllers/quiz.controller.js';
 
 import { protect } from '../middlewares/auth.middleware.js';
@@ -41,6 +42,7 @@ router.post("/",
 );
 router.get("/", getQuizzes);
 router.get("/:id", getQuizById);
+router.get("/code/:code", getQuizByCode)
 router.put("/:id/update", updateQuiz);
 router.patch("/:id/publish",
     rateLimit({
