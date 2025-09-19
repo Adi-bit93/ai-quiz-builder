@@ -6,7 +6,7 @@ export default function QuizResult() {
   const navigate = useNavigate();
   const [showDetailedResults, setShowDetailedResults] = useState(true);
   
-  // ✅ FIXED: Better data extraction with fallbacks
+
   const stateData = location.state || {};
   const {
     quiz,
@@ -14,8 +14,7 @@ export default function QuizResult() {
     finalScore,
     totalQuestions,
     participant,
-    completedAt,
-    timeTaken // This is not being passed from QuizStart.jsx
+    completedAt
   } = stateData;
 
   console.log("QuizResult received data:", stateData); // Debug log

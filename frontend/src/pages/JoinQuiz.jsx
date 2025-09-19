@@ -16,34 +16,29 @@ export default function JoinQuiz() {
     }
 
     try {
-      // 1️⃣ validate joining
       const res = await apiRequest(`/quizzes/join/${code}`);
       if (!res.ok) {
         alert("Invalid code or quiz not available.");
         return;
       }
-
-      // 2️⃣ fetch full quiz details
       const fullQuizRes = await apiRequest(`/quizzes/code/${code}`);
       if (!fullQuizRes.ok) {
         alert("Could not fetch quiz details.");
         return;
       }
 
-      const quiz = await fullQuizRes.json(); // ✅ full quiz from DB
+      const quiz = await fullQuizRes.json();
 
-      // 3️⃣ notify server
       socket.emit("joinLeaderboard", {
         quizCode: code,
         name,
         role,
       });
 
-      // 4️⃣ go to lobby with original quiz
       navigate("/lobby", {
         state: {
           participant: name,
-          quiz, // ✅ send full quiz object (with title & questions)
+          quiz,
           quizCode: code,
           role,
         },
@@ -55,60 +50,87 @@ export default function JoinQuiz() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-      <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-6 text-center text-gray-800">
-          Join Quiz
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 flex items-center justify-center p-4">
+      <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100">
+        {/* Title */}
+        <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
+          🎯 Join a Quiz
         </h1>
+        <p className="text-center text-gray-500 text-sm mb-8">
+          Enter your details below to join the quiz lobby.
+        </p>
 
-        <input
-          type="text"
-          placeholder="Enter your name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="w-full p-3 mb-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-        />
-
-        <input
-          type="text"
-          placeholder="Enter quiz code"
-          value={code}
-          onChange={(e) => setCode(e.target.value)}
-          className="w-full p-3 mb-6 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-        />
-
-        {/* Role selection */}
-        <div className="flex justify-center mb-6 space-x-4">
-          <button
-            type="button"
-            onClick={() => setRole("participant")}
-            className={`px-4 py-2 rounded-lg font-semibold transition ${
-              role === "participant"
-                ? "bg-blue-500 text-white shadow-md"
-                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-            }`}
-          >
-            Participant
-          </button>
-          <button
-            type="button"
-            onClick={() => setRole("organizer")}
-            className={`px-4 py-2 rounded-lg font-semibold transition ${
-              role === "organizer"
-                ? "bg-green-500 text-white shadow-md"
-                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-            }`}
-          >
-            Organizer
-          </button>
+        {/* Name Input */}
+        <div className="mb-5">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Your Name
+          </label>
+          <input
+            type="text"
+            placeholder="Enter your name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+          />
         </div>
 
+        {/* Quiz Code Input */}
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Quiz Code
+          </label>
+          <input
+            type="text"
+            placeholder="Enter quiz code"
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+          />
+        </div>
+
+        {/* Role Selection */}
+        <div className="mb-8">
+          <p className="text-sm font-semibold text-gray-700 mb-3 text-center sm:text-left">
+            Choose Your Role
+          </p>
+          <div className="grid grid-cols-2 gap-4">
+            <button
+              type="button"
+              onClick={() => setRole("participant")}
+              className={`px-4 py-3 rounded-lg font-semibold text-sm transition-all duration-200 ${
+                role === "participant"
+                  ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-md"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
+            >
+              👤 Participant
+            </button>
+            <button
+              type="button"
+              onClick={() => setRole("organizer")}
+              className={`px-4 py-3 rounded-lg font-semibold text-sm transition-all duration-200 ${
+                role === "organizer"
+                  ? "bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-md"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
+            >
+              🛠 Organizer
+            </button>
+          </div>
+        </div>
+
+        {/* Join Button */}
         <button
           onClick={handleJoin}
-          className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-3 rounded-lg font-bold hover:from-blue-600 hover:to-indigo-700 transition-transform transform hover:scale-105"
+          className="w-full py-3 rounded-lg font-bold text-white text-lg shadow-md bg-gradient-to-r from-purple-500 to-blue-500 hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200"
         >
-          Join Quiz
+          🚀 Join Quiz
         </button>
+
+        {/* Footer */}
+        <p className="text-xs text-gray-500 mt-6 text-center">
+          Make sure you have the correct quiz code before joining.
+        </p>
       </div>
     </div>
   );
