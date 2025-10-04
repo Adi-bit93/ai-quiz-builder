@@ -1,8 +1,12 @@
 import { useEffect, useState, useRef } from "react";
 import io from "socket.io-client";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLocation } from "react-router-dom";
 
 export default function Leaderboard({ quizCode, organizerName }) {
+    const state = useLocation().state || {};
+    quizCode = quizCode || state.quizCode;
+    organizerName = organizerName || state.organizerName || "Organizer";
     const [leaderboard, setLeaderboard] = useState([]);
     const [connectionStatus, setConnectionStatus] = useState("connecting");
     const [error, setError] = useState(null);

@@ -39,7 +39,7 @@ export default function JoinQuiz() {
         state: {
           participant: name,
           quiz,
-          quizCode: code,
+          quizCode: quiz.code,
           role,
         },
       });

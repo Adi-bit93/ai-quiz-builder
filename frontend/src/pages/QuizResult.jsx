@@ -12,10 +12,10 @@ export default function QuizResult() {
     quiz,
     answers = [],
     finalScore,
-    totalQuestions,
-    participant,
-    completedAt
-  } = stateData;
+    totalQuestions, 
+    participant, 
+    completedAt 
+  } = stateData; 
 
   console.log("QuizResult received data:", stateData); // Debug log
 

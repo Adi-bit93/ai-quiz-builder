@@ -41,8 +41,6 @@ function App() {
            <Route path='/quiz-start' element={<QuizStart/>}></Route>
            <Route path='/quiz-result' element={<QuizResult/>}></Route>
            <Route path='/leaderboard' element={<Leaderboard 
-           quizCode
-           participant
            />}></Route>
         </Routes>
       </BrowserRouter>
