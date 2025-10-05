@@ -2,6 +2,7 @@ import { useState } from "react";
 import { apiRequest } from "../lib/api.js";
 import { useNavigate } from "react-router-dom";
 import { socket } from "../lib/socket.js";
+const Base_URL = "http://localhost:5000/api/v1";
 
 export default function JoinQuiz() {
   const [code, setCode] = useState("");
@@ -16,7 +17,7 @@ export default function JoinQuiz() {
     }
 
     try {
-      const res = await apiRequest(`/quizzes/join/${code}`);
+      const res = await fetch(`${Base_URL}/quizzes/join/${code}`);
       if (!res.ok) {
         alert("Invalid code or quiz not available.");
         return;
@@ -27,9 +28,10 @@ export default function JoinQuiz() {
         return;
       }
 
-      const quiz = await fullQuizRes.json();
+      const quizres = await fullQuizRes.json();
+      const quiz = quizres.data || quizres;
 
-      socket.emit("joinLeaderboard", {
+      socket.emit("joinLobby", {
         quizCode: code,
         name,
         role,
@@ -97,22 +99,20 @@ export default function JoinQuiz() {
             <button
               type="button"
               onClick={() => setRole("participant")}
-              className={`px-4 py-3 rounded-lg font-semibold text-sm transition-all duration-200 ${
-                role === "participant"
+              className={`px-4 py-3 rounded-lg font-semibold text-sm transition-all duration-200 ${role === "participant"
                   ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-md"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-              }`}
+                }`}
             >
               👤 Participant
             </button>
             <button
               type="button"
               onClick={() => setRole("organizer")}
-              className={`px-4 py-3 rounded-lg font-semibold text-sm transition-all duration-200 ${
-                role === "organizer"
+              className={`px-4 py-3 rounded-lg font-semibold text-sm transition-all duration-200 ${role === "organizer"
                   ? "bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-md"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-              }`}
+                }`}
             >
               🛠 Organizer
             </button>

@@ -36,12 +36,12 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route path='/quizzes/:id/update' element={<EditQuiz />}></Route>
           </Route>
-           <Route path='/join' element={<JoinQuiz/>}></Route>
-           <Route path='/lobby' element={<Lobby/>}></Route>
-           <Route path='/quiz-start' element={<QuizStart/>}></Route>
-           <Route path='/quiz-result' element={<QuizResult/>}></Route>
-           <Route path='/leaderboard' element={<Leaderboard 
-           />}></Route>
+          <Route path='/join' element={<JoinQuiz />}></Route>
+          <Route path='/lobby' element={<Lobby />}></Route>
+          <Route path='/quiz-start' element={<QuizStart />}></Route>
+          <Route path='/quiz-result' element={<QuizResult />}></Route>
+          <Route path='/leaderboard' element={<Leaderboard
+          />}></Route>
         </Routes>
       </BrowserRouter>
     </AuthProvider>

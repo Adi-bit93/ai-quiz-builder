@@ -50,7 +50,7 @@ export default function Leaderboard({ quizCode, organizerName }) {
             };
             
             addDebugInfo(`Joining leaderboard with data: ${JSON.stringify(joinData)}`);
-            socket.emit("joinLeaderboard", joinData);
+            socket.emit("joinLobby", joinData);
         });
 
         socket.on("connect_error", (err) => {
@@ -65,7 +65,7 @@ export default function Leaderboard({ quizCode, organizerName }) {
         });
 
         // Leaderboard event listener - MATCHES YOUR BACKEND
-        socket.on("leaderboardUpdate", (data) => {
+        socket.on("updateParticipants", (data) => {
             addDebugInfo(`Leaderboard update received: ${data?.length || 0} participants`);
             console.log("Raw leaderboard data:", data);
             
