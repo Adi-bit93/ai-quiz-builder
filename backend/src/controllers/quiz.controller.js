@@ -213,7 +213,7 @@ const getQuizByCode = asyncHandler(async (req, res) => {
  
      return res
          .status(200)
-         .json(new ApiResponse(201, quiz, "Quiz fetched succefully"))
+         .json(new ApiResponse(200, quiz, "Quiz fetched succefully"))
  
    } catch (error) {
         res.status(500)

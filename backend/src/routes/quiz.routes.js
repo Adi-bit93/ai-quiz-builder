@@ -16,6 +16,14 @@ import { rateLimit } from '../middlewares/rateLimit.js';
 
 const router = express.Router();
 
+router.get("/join/:code",
+    rateLimit({
+        windowInSeconds:30,
+        maxRequests:10
+    }),
+    joinQuizByCode);
+    router.get("/code/:code", getQuizByCode);
+
 router.use(protect);
 
 //AI Quiz Generator
@@ -26,12 +34,6 @@ router.post("/ai/generate",
     }),
     generateQuizAI
 )
-router.get("/join/:code",
-    rateLimit({
-        windowInSeconds:30,
-        maxRequests:10
-    }),
-    joinQuizByCode);
 
 router.post("/",
     rateLimit({
@@ -42,7 +44,6 @@ router.post("/",
 );
 router.get("/", getQuizzes);
 router.get("/:id", getQuizById);
-router.get("/code/:code", getQuizByCode)
 router.put("/:id/update", updateQuiz);
 router.patch("/:id/publish",
     rateLimit({
