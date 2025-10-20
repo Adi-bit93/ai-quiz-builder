@@ -37,7 +37,7 @@ export default function Lobby() {
     // when quiz starts
     socket.on("quizStarted", ({ quizCode }) => {
       if (role === "organizer") {
-        navigate("/leaderboard", { state: { quizCode: quiz.code , organizerName: name } });
+        navigate("/leaderboard", { state: { quizCode: quiz.code , organizerName: name, quiz } });
       } else {
         navigate("/quiz-start", { state: { quizCode, name, quiz} });
       }

@@ -41,14 +41,14 @@ export default function Leaderboard({ quizCode, organizerName }) {
             setConnectionStatus("connected");
             setError(null);
             addDebugInfo(`Socket connected with ID: ${socket.id}`);
-            
+
             // Join the leaderboard - MATCHES YOUR BACKEND
             const joinData = {
                 quizCode: quizCode,
                 name: organizerName || "Organizer",
                 role: "organizer" // This matches your backend logic
             };
-            
+
             addDebugInfo(`Joining leaderboard with data: ${JSON.stringify(joinData)}`);
             socket.emit("joinLobby", joinData);
         });
@@ -68,7 +68,7 @@ export default function Leaderboard({ quizCode, organizerName }) {
         socket.on("updateParticipants", (data) => {
             addDebugInfo(`Leaderboard update received: ${data?.length || 0} participants`);
             console.log("Raw leaderboard data:", data);
-            
+
             if (Array.isArray(data)) {
                 setLeaderboard(data);
                 setError(null);
@@ -76,6 +76,16 @@ export default function Leaderboard({ quizCode, organizerName }) {
                 addDebugInfo("Invalid leaderboard data format - expected array");
                 console.error("Invalid leaderboard data:", data);
             }
+        });
+            
+        // Update score on leaderboard
+        socket.on("scoreUpdated", ({ name, score }) => {
+            addDebugInfo(`Score updated: ${name} -> ${score}`);
+            setLeaderboard(prev =>
+                prev.map(player =>
+                    player.name === name ? { ...player, score } : player
+                )
+            );
         });
 
         // Participant joined event
@@ -114,7 +124,7 @@ export default function Leaderboard({ quizCode, organizerName }) {
         if (socketRef.current?.connected) {
             const testPlayerName = `Player${Math.floor(Math.random() * 100)}`;
             addDebugInfo(`Adding test player: ${testPlayerName}`);
-            
+
             socketRef.current.emit("joinLeaderboard", {
                 quizCode: quizCode,
                 name: testPlayerName,
@@ -127,9 +137,9 @@ export default function Leaderboard({ quizCode, organizerName }) {
         if (socketRef.current?.connected && leaderboard.length > 0) {
             const randomPlayer = leaderboard[Math.floor(Math.random() * leaderboard.length)];
             const randomScore = Math.floor(Math.random() * 50) + 10;
-            
+
             addDebugInfo(`Adding ${randomScore} points to ${randomPlayer.name}`);
-            
+
             socketRef.current.emit("updateScore", {
                 quizCode: quizCode,
                 name: randomPlayer.name,
@@ -159,33 +169,32 @@ export default function Leaderboard({ quizCode, organizerName }) {
             {/* Connection Status & Controls */}
             <div className="mb-4 flex flex-wrap items-center justify-center gap-2">
                 <div className="flex items-center gap-2">
-                    <div className={`w-3 h-3 rounded-full ${
-                        connectionStatus === "connected" ? "bg-green-500" : 
-                        connectionStatus === "connecting" ? "bg-yellow-500" : 
-                        "bg-red-500"
-                    }`}></div>
+                    <div className={`w-3 h-3 rounded-full ${connectionStatus === "connected" ? "bg-green-500" :
+                            connectionStatus === "connecting" ? "bg-yellow-500" :
+                                "bg-red-500"
+                        }`}></div>
                     <span className="text-sm text-gray-400">
                         Status: {connectionStatus}
                     </span>
                 </div>
-                
+
                 {/* Test Controls - Remove in production */}
                 {connectionStatus === "connected" && (
                     <div className="flex gap-2">
-                        <button 
+                        <button
                             onClick={addTestPlayer}
                             className="px-3 py-1 bg-green-600 hover:bg-green-700 rounded text-sm"
                         >
                             Add Test Player
                         </button>
-                        <button 
+                        <button
                             onClick={addTestScore}
                             className="px-3 py-1 bg-blue-600 hover:bg-blue-700 rounded text-sm"
                             disabled={leaderboard.length === 0}
                         >
                             Add Test Score
                         </button>
-                        <button 
+                        <button
                             onClick={startQuiz}
                             className="px-3 py-1 bg-purple-600 hover:bg-purple-700 rounded text-sm"
                         >
@@ -236,7 +245,7 @@ export default function Leaderboard({ quizCode, organizerName }) {
                                 {leaderboard.length} participant{leaderboard.length !== 1 ? 's' : ''} competing
                             </p>
                         </div>
-                        
+
                         <AnimatePresence>
                             {leaderboard.map((player, index) => (
                                 <motion.div
@@ -256,7 +265,7 @@ export default function Leaderboard({ quizCode, organizerName }) {
                                         {/* Rank with Medal */}
                                         <span className="text-xl font-bold flex items-center">
                                             {index === 0 && "🥇"}
-                                            {index === 1 && "🥈"} 
+                                            {index === 1 && "🥈"}
                                             {index === 2 && "🥉"}
                                             {index > 2 && `#${index + 1}`}
                                         </span>
