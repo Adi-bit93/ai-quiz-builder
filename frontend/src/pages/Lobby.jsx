@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { io } from "socket.io-client";
-
-const socket = io("http://localhost:5000", { withCredentials: true });
+import { socket } from "../lib/socket.js";
 
 export default function Lobby() {
    const location = useLocation();
@@ -37,9 +36,9 @@ export default function Lobby() {
     // when quiz starts
     socket.on("quizStarted", ({ quizCode }) => {
       if (role === "organizer") {
-        navigate("/leaderboard", { state: { quizCode: quiz.code , organizerName: name, quiz } });
+        navigate("/leaderboard", { state: { quizCode: quizCode , organizerName: name, quiz } });
       } else {
-        navigate("/quiz-start", { state: { quizCode, name, quiz} });
+        navigate("/quiz-start", { state: { quizCode: quizCode, participant: name, quiz} });
       }
     });
 

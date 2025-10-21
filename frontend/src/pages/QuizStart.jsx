@@ -2,10 +2,12 @@ import { useEffect, useState, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import io from "socket.io-client";
 import { motion, AnimatePresence } from "framer-motion";
+import { socket } from "../lib/socket.js";
 
-const socket = io(import.meta.env.VITE_BACKEND_URL, {
-  transports: ["websocket"],
-});
+
+// const socket = io(import.meta.env.VITE_BACKEND_URL, {
+//   transports: ["websocket"],
+// });
 
 export default function QuizStart() {
   const navigate = useNavigate();
@@ -66,14 +68,17 @@ export default function QuizStart() {
     };
 
     const updatedAnswers = [...answers, answerData];
+    const pointsEarned = updatedScore - score;
     setAnswers(updatedAnswers);
     setScore(updatedScore);
 
+    console.log("Sending score update:", pointsEarned);
+
     // Send score to leaderboard
     socket.emit("updateScore", {
-      quizCode: quiz.code,
+      quizCode: quizCode,
       name: participant,
-      score: updatedScore,
+      score: pointsEarned,
     });
 
     if (currentQ < quiz.questions.length - 1) {

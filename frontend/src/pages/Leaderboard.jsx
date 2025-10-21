@@ -1,7 +1,9 @@
+// src/pages/Leaderboard.jsx (drop-in replacement)
 import { useEffect, useState, useRef } from "react";
 import io from "socket.io-client";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation } from "react-router-dom";
+import { socket } from "../lib/socket.js";
 
 export default function Leaderboard({ quizCode, organizerName }) {
     const state = useLocation().state || {};
@@ -16,7 +18,7 @@ export default function Leaderboard({ quizCode, organizerName }) {
     // Debug function to log events
     const addDebugInfo = (message) => {
         const timestamp = new Date().toLocaleTimeString();
-        setDebugInfo(prev => [...prev.slice(-4), `${timestamp}: ${message}`]);
+        setDebugInfo(prev => [...prev.slice(-6), `${timestamp}: ${message}`]);
         console.log(`[Leaderboard Debug] ${timestamp}: ${message}`);
     };
 
@@ -27,14 +29,14 @@ export default function Leaderboard({ quizCode, organizerName }) {
             return;
         }
 
-        // Initialize socket connection
-        socketRef.current = io("http://localhost:5000", {
-            transports: ["websocket", "polling"],
-            timeout: 20000,
-            forceNew: true
-        });
+        // Initialize socket connection (forceNew:true ensures fresh socket)
+        // socketRef.current = io("http://localhost:5000", {
+        //     transports: ["websocket", "polling"],
+        //     timeout: 20000,
+        //     forceNew: true
+        // });
 
-        const socket = socketRef.current;
+        // const socket = socketRef.current;
 
         // Connection event listeners
         socket.on("connect", () => {
@@ -42,11 +44,11 @@ export default function Leaderboard({ quizCode, organizerName }) {
             setError(null);
             addDebugInfo(`Socket connected with ID: ${socket.id}`);
 
-            // Join the leaderboard - MATCHES YOUR BACKEND
+            // Join the leaderboard room
             const joinData = {
                 quizCode: quizCode,
                 name: organizerName || "Organizer",
-                role: "organizer" // This matches your backend logic
+                role: "organizer"
             };
 
             addDebugInfo(`Joining leaderboard with data: ${JSON.stringify(joinData)}`);
@@ -64,52 +66,58 @@ export default function Leaderboard({ quizCode, organizerName }) {
             addDebugInfo(`Socket disconnected: ${reason}`);
         });
 
-        // Leaderboard event listener - MATCHES YOUR BACKEND
+        // existing updateParticipants from server (join/disconnect)
         socket.on("updateParticipants", (data) => {
-            addDebugInfo(`Leaderboard update received: ${data?.length || 0} participants`);
-            console.log("Raw leaderboard data:", data);
+            addDebugInfo(`updateParticipants received: ${data?.length || 0} participants`);
+            console.log("Raw leaderboard data (updateParticipants):", data);
 
             if (Array.isArray(data)) {
-                setLeaderboard(data);
+                // Keep UI consistent - sort descending by score
+                const sorted = data.slice().sort((a, b) => b.score - a.score);
+                setLeaderboard(sorted);
                 setError(null);
             } else {
-                addDebugInfo("Invalid leaderboard data format - expected array");
-                console.error("Invalid leaderboard data:", data);
+                addDebugInfo("Invalid updateParticipants data format - expected array");
+                console.error("Invalid updateParticipants data:", data);
             }
         });
-            
-        // Update score on leaderboard
-        socket.on("scoreUpdated", ({ name, score }) => {
-            addDebugInfo(`Score updated: ${name} -> ${score}`);
-            setLeaderboard(prev =>
-                prev.map(player =>
-                    player.name === name ? { ...player, score } : player
-                )
-            );
+
+        // IMPORTANT: authoritative leaderboard updates (scores changed)
+        socket.on("leaderboardUpdate", (data) => {
+            addDebugInfo(`leaderboardUpdate received: ${data?.length || 0}`);
+            console.log("leaderboardUpdate payload:", data);
+
+            if (Array.isArray(data)) {
+                const sorted = data.slice().sort((a, b) => b.score - a.score);
+                setLeaderboard(sorted);
+                setError(null);
+            } else {
+                addDebugInfo("Invalid leaderboardUpdate payload");
+                console.error("Invalid leaderboardUpdate payload:", data);
+            }
         });
 
-        // Participant joined event
+        // small helper events
         socket.on("participantJoined", (data) => {
-            addDebugInfo(`Participant joined: ${data.name}`);
+            addDebugInfo(`Participant joined: ${data?.name || JSON.stringify(data)}`);
         });
 
-        // Quiz started event
         socket.on("quizStarted", () => {
             addDebugInfo("Quiz has started!");
         });
 
-        // Error handling
         socket.on("error", (errorData) => {
             setError(errorData.message || "Socket error occurred");
-            addDebugInfo(`Socket error: ${errorData}`);
+            addDebugInfo(`Socket error: ${JSON.stringify(errorData)}`);
         });
 
-        // Cleanup function
+        // Cleanup on unmount
         return () => {
             if (socket) {
                 socket.off("connect");
                 socket.off("connect_error");
                 socket.off("disconnect");
+                socket.off("updateParticipants");
                 socket.off("leaderboardUpdate");
                 socket.off("participantJoined");
                 socket.off("quizStarted");
@@ -119,16 +127,16 @@ export default function Leaderboard({ quizCode, organizerName }) {
         };
     }, [quizCode, organizerName]);
 
-    // Manual functions for testing
+    // Manual functions for testing (kept as-is)
     const addTestPlayer = () => {
         if (socketRef.current?.connected) {
             const testPlayerName = `Player${Math.floor(Math.random() * 100)}`;
             addDebugInfo(`Adding test player: ${testPlayerName}`);
 
-            socketRef.current.emit("joinLeaderboard", {
+            socketRef.current.emit("joinLobby", {
                 quizCode: quizCode,
                 name: testPlayerName,
-                role: "player"
+                role: "participant"
             });
         }
     };
@@ -155,6 +163,7 @@ export default function Leaderboard({ quizCode, organizerName }) {
         }
     };
 
+    // --- UI (kept identical to your version) ---
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black text-white flex flex-col items-center p-6">
             {/* Header */}
@@ -249,7 +258,7 @@ export default function Leaderboard({ quizCode, organizerName }) {
                         <AnimatePresence>
                             {leaderboard.map((player, index) => (
                                 <motion.div
-                                    key={`${player.name}-${index}`} // Use name + index as key
+                                    key={`${player.id}-${index}`}
                                     initial={{ opacity: 0, y: -20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, x: -50 }}
