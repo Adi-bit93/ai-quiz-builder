@@ -12,7 +12,7 @@ import { socket } from "../lib/socket.js";
 export default function QuizStart() {
   const navigate = useNavigate();
   const { state } = useLocation();
-  const { quiz, quizCode, participant, name } = state || {};
+  const { quiz, quizCode, participant } = state || {};
 
   const [currentQ, setCurrentQ] = useState(0);
   const [selected, setSelected] = useState(null);
@@ -88,18 +88,33 @@ export default function QuizStart() {
     setAnswers(updatedAnswers);
     setScore(updatedScore);
 
-    console.log("Sending score update:", {
-      quizCode,
-      participantName: participant,
-      score: updatedScore, // ✅ Fix 2: send total score (not delta)
-    });
 
+
+    if (selected !== null) {
+      console.log("Sending score update:", {
+        quizCode,
+        participantName: participant,
+        score: updatedScore, // ✅ Fix 2: send total score (not delta)
+      },
+
+        socket.emit("updateScore", {
+          quizCode,
+          name: participant,
+          score: updatedScore,
+          isCorrect: isAnswerCorrect,
+          wasAnswered: true
+        })
+      );
+    } else {
+      socket.emit("updateScore", {
+        quizCode,
+        name: participant,
+        score: 0,
+        wasAnswered: false
+      })
+    }
     // 🧠 Fix 2: send total score, not just pointsEarned
-    socket.emit("updateScore", {
-      quizCode,
-      name: participant,
-      score: updatedScore,
-    });
+
 
     if (currentQ < quiz.questions.length - 1) {
       setCurrentQ((prev) => prev + 1);
@@ -174,9 +189,8 @@ export default function QuizStart() {
                 color: isTimeRunningOut ? ["#fbbf24", "#ef4444", "#fbbf24"] : "#60a5fa"
               }}
               transition={{ duration: 0.5, repeat: isTimeRunningOut ? Infinity : 0 }}
-              className={`text-2xl font-bold font-mono ${
-                isTimeRunningOut ? "text-red-400" : "text-blue-400"
-              }`}
+              className={`text-2xl font-bold font-mono ${isTimeRunningOut ? "text-red-400" : "text-blue-400"
+                }`}
             >
               {timeLeft}s
             </motion.span>
@@ -222,19 +236,17 @@ export default function QuizStart() {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => setSelected(index)}
-                    className={`w-full p-4 rounded-2xl text-left font-semibold text-lg transition-all duration-200 border-2 backdrop-blur-sm ${
-                      selected === index
+                    className={`w-full p-4 rounded-2xl text-left font-semibold text-lg transition-all duration-200 border-2 backdrop-blur-sm ${selected === index
                         ? "bg-gradient-to-r from-green-500/30 to-emerald-500/30 border-green-400 text-green-100 shadow-lg shadow-green-500/50"
                         : "bg-white/10 border-white/20 text-gray-100 hover:bg-white/15 hover:border-white/30"
-                    }`}
+                      }`}
                   >
                     <div className="flex items-center justify-between">
                       <span className="flex items-center gap-3">
-                        <span className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${
-                          selected === index
+                        <span className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${selected === index
                             ? "bg-green-400 text-white"
                             : "bg-white/20 text-gray-300"
-                        }`}>
+                          }`}>
                           {String.fromCharCode(65 + index)}
                         </span>
                         {option}
@@ -265,11 +277,10 @@ export default function QuizStart() {
             <button
               onClick={handleNext}
               disabled={selected === null}
-              className={`px-10 py-4 rounded-2xl font-bold text-lg transition-all duration-200 shadow-lg ${
-                selected === null
+              className={`px-10 py-4 rounded-2xl font-bold text-lg transition-all duration-200 shadow-lg ${selected === null
                   ? "bg-gray-600 text-gray-400 cursor-not-allowed"
                   : "bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white hover:shadow-xl hover:shadow-purple-500/50 hover:scale-105 active:scale-95"
-              }`}
+                }`}
             >
               {currentQ === quiz.questions.length - 1 ? (
                 <span className="flex items-center gap-2">
