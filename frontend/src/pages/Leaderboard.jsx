@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from "react";
 import io from "socket.io-client";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation } from "react-router-dom";
-import { socket } from "../lib/socket.js";
+
 
 export default function Leaderboard({ quizCode, organizerName }) {
     const state = useLocation().state || {};
@@ -23,6 +23,12 @@ export default function Leaderboard({ quizCode, organizerName }) {
     };
 
     useEffect(() => {
+        const socket = io("http://localhost:5000", {
+            withCredentials: true,
+            transports: ["websocket"],
+        });
+
+        console.log("Current socket ID:", socket.id);
         // Validate required props
         if (!quizCode) {
             setError("Quiz code is required");
@@ -127,35 +133,6 @@ export default function Leaderboard({ quizCode, organizerName }) {
         };
     }, [quizCode, organizerName]);
 
-    // Manual functions for testing (kept as-is)
-    const addTestPlayer = () => {
-        if (socketRef.current?.connected) {
-            const testPlayerName = `Player${Math.floor(Math.random() * 100)}`;
-            addDebugInfo(`Adding test player: ${testPlayerName}`);
-
-            socketRef.current.emit("joinLobby", {
-                quizCode: quizCode,
-                name: testPlayerName,
-                role: "participant"
-            });
-        }
-    };
-
-    const addTestScore = () => {
-        if (socketRef.current?.connected && leaderboard.length > 0) {
-            const randomPlayer = leaderboard[Math.floor(Math.random() * leaderboard.length)];
-            const randomScore = Math.floor(Math.random() * 50) + 10;
-
-            addDebugInfo(`Adding ${randomScore} points to ${randomPlayer.name}`);
-
-            socketRef.current.emit("updateScore", {
-                quizCode: quizCode,
-                name: randomPlayer.name,
-                score: randomScore
-            });
-        }
-    };
-
     const startQuiz = () => {
         if (socketRef.current?.connected) {
             addDebugInfo("Starting quiz...");
@@ -179,38 +156,13 @@ export default function Leaderboard({ quizCode, organizerName }) {
             <div className="mb-4 flex flex-wrap items-center justify-center gap-2">
                 <div className="flex items-center gap-2">
                     <div className={`w-3 h-3 rounded-full ${connectionStatus === "connected" ? "bg-green-500" :
-                            connectionStatus === "connecting" ? "bg-yellow-500" :
-                                "bg-red-500"
+                        connectionStatus === "connecting" ? "bg-yellow-500" :
+                            "bg-red-500"
                         }`}></div>
                     <span className="text-sm text-gray-400">
                         Status: {connectionStatus}
                     </span>
                 </div>
-
-                {/* Test Controls - Remove in production */}
-                {connectionStatus === "connected" && (
-                    <div className="flex gap-2">
-                        <button
-                            onClick={addTestPlayer}
-                            className="px-3 py-1 bg-green-600 hover:bg-green-700 rounded text-sm"
-                        >
-                            Add Test Player
-                        </button>
-                        <button
-                            onClick={addTestScore}
-                            className="px-3 py-1 bg-blue-600 hover:bg-blue-700 rounded text-sm"
-                            disabled={leaderboard.length === 0}
-                        >
-                            Add Test Score
-                        </button>
-                        <button
-                            onClick={startQuiz}
-                            className="px-3 py-1 bg-purple-600 hover:bg-purple-700 rounded text-sm"
-                        >
-                            Start Quiz
-                        </button>
-                    </div>
-                )}
             </div>
 
             {/* Error Message */}

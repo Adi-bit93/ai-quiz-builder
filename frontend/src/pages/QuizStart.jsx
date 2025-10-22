@@ -4,7 +4,7 @@ import io from "socket.io-client";
 import { motion, AnimatePresence } from "framer-motion";
 import { socket } from "../lib/socket.js";
 
-
+// ⚙️ Fix 1: Ensure socket connects cleanly only once
 // const socket = io(import.meta.env.VITE_BACKEND_URL, {
 //   transports: ["websocket"],
 // });
@@ -12,7 +12,7 @@ import { socket } from "../lib/socket.js";
 export default function QuizStart() {
   const navigate = useNavigate();
   const { state } = useLocation();
-  const { quiz, quizCode, participant } = state || {};
+  const { quiz, quizCode, participant, name } = state || {};
 
   const [currentQ, setCurrentQ] = useState(0);
   const [selected, setSelected] = useState(null);
@@ -22,7 +22,24 @@ export default function QuizStart() {
   const [showTimeUp, setShowTimeUp] = useState(false);
   const timerRef = useRef(null);
 
-  // Redirect if quiz data is missing
+  // 🧠 NEW: join room on load to activate leaderboard
+  useEffect(() => {
+    if (quizCode && participant) {
+      socket.emit("joinLobby", {
+        quizCode,
+        participantName: participant,
+        role: "participant",
+      });
+      console.log(`✅ Joined quiz room ${quizCode} as ${participant}`);
+    }
+
+    return () => {
+      socket.emit("leaveLobby", { quizCode, participantName: participant });
+      console.log(`❌ Left quiz room ${quizCode}`);
+    };
+  }, [quizCode, participant]);
+
+  // Redirect if quiz data missing
   useEffect(() => {
     if (!quiz) {
       navigate("/join");
@@ -51,7 +68,6 @@ export default function QuizStart() {
 
     const isAnswerCorrect = selected === q.correctIndex;
 
-    // Calculate score
     if (isAnswerCorrect) {
       updatedScore += 10 + Math.max(0, timeLeft);
     } else if (selected !== null) {
@@ -72,13 +88,17 @@ export default function QuizStart() {
     setAnswers(updatedAnswers);
     setScore(updatedScore);
 
-    console.log("Sending score update:", pointsEarned);
+    console.log("Sending score update:", {
+      quizCode,
+      participantName: participant,
+      score: updatedScore, // ✅ Fix 2: send total score (not delta)
+    });
 
-    // Send score to leaderboard
+    // 🧠 Fix 2: send total score, not just pointsEarned
     socket.emit("updateScore", {
-      quizCode: quizCode,
+      quizCode,
       name: participant,
-      score: pointsEarned,
+      score: updatedScore,
     });
 
     if (currentQ < quiz.questions.length - 1) {
