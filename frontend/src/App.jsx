@@ -14,13 +14,15 @@ import QuizStart from './pages/QuizStart';
 import QuizResult from './pages/QuizResult';
 import Lobby from './pages/Lobby';
 import Leaderboard from './pages/Leaderboard';
+import HomePage from './pages/HomePage';
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Signup />} />
+          <Route path="/" element={<HomePage/>} />
           <Route path="/login" element={<Login />}></Route>
+          <Route path="/signup" element={<Signup />}></Route>
           <Route element={<ProtectedRoute />}>
             <Route path='/dashboard' element={<Dashboard />}></Route>
           </Route>

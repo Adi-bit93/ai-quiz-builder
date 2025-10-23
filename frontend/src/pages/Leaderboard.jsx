@@ -1,4 +1,3 @@
-// src/pages/Leaderboard.jsx (drop-in replacement)
 import { useEffect, useState, useRef } from "react";
 import io from "socket.io-client";
 import { motion, AnimatePresence } from "framer-motion";
@@ -12,15 +11,7 @@ export default function Leaderboard({ quizCode, organizerName }) {
     const [leaderboard, setLeaderboard] = useState([]);
     const [connectionStatus, setConnectionStatus] = useState("connecting");
     const [error, setError] = useState(null);
-    const [debugInfo, setDebugInfo] = useState([]);
     const socketRef = useRef(null);
-
-    // Debug function to log events
-    const addDebugInfo = (message) => {
-        const timestamp = new Date().toLocaleTimeString();
-        setDebugInfo(prev => [...prev.slice(-6), `${timestamp}: ${message}`]);
-        console.log(`[Leaderboard Debug] ${timestamp}: ${message}`);
-    };
 
     useEffect(() => {
         const socket = io("http://localhost:5000", {
@@ -35,20 +26,10 @@ export default function Leaderboard({ quizCode, organizerName }) {
             return;
         }
 
-        // Initialize socket connection (forceNew:true ensures fresh socket)
-        // socketRef.current = io("http://localhost:5000", {
-        //     transports: ["websocket", "polling"],
-        //     timeout: 20000,
-        //     forceNew: true
-        // });
-
-        // const socket = socketRef.current;
-
         // Connection event listeners
         socket.on("connect", () => {
             setConnectionStatus("connected");
             setError(null);
-            addDebugInfo(`Socket connected with ID: ${socket.id}`);
 
             // Join the leaderboard room
             const joinData = {
@@ -56,25 +37,19 @@ export default function Leaderboard({ quizCode, organizerName }) {
                 name: organizerName || "Organizer",
                 role: "organizer"
             };
-
-            addDebugInfo(`Joining leaderboard with data: ${JSON.stringify(joinData)}`);
             socket.emit("joinLobby", joinData);
         });
 
         socket.on("connect_error", (err) => {
             setConnectionStatus("error");
             setError(`Connection failed: ${err.message}`);
-            addDebugInfo(`Connection error: ${err.message}`);
         });
 
         socket.on("disconnect", (reason) => {
             setConnectionStatus("disconnected");
-            addDebugInfo(`Socket disconnected: ${reason}`);
         });
 
-        // existing updateParticipants from server (join/disconnect)
         socket.on("updateParticipants", (data) => {
-            addDebugInfo(`updateParticipants received: ${data?.length || 0} participants`);
             console.log("Raw leaderboard data (updateParticipants):", data);
 
             if (Array.isArray(data)) {
@@ -83,38 +58,34 @@ export default function Leaderboard({ quizCode, organizerName }) {
                 setLeaderboard(sorted);
                 setError(null);
             } else {
-                addDebugInfo("Invalid updateParticipants data format - expected array");
                 console.error("Invalid updateParticipants data:", data);
             }
         });
 
         // IMPORTANT: authoritative leaderboard updates (scores changed)
         socket.on("leaderboardUpdate", (data) => {
-            addDebugInfo(`leaderboardUpdate received: ${data?.length || 0}`);
-            console.log("leaderboardUpdate payload:", data);
-
             if (Array.isArray(data)) {
                 const sorted = data.slice().sort((a, b) => b.score - a.score);
                 setLeaderboard(sorted);
                 setError(null);
             } else {
-                addDebugInfo("Invalid leaderboardUpdate payload");
                 console.error("Invalid leaderboardUpdate payload:", data);
             }
         });
 
         // small helper events
         socket.on("participantJoined", (data) => {
-            addDebugInfo(`Participant joined: ${data?.name || JSON.stringify(data)}`);
+            console.log("Participant joined:", data)
         });
 
         socket.on("quizStarted", () => {
-            addDebugInfo("Quiz has started!");
+            console.log("Quiz Started");
+            
         });
 
         socket.on("error", (errorData) => {
             setError(errorData.message || "Socket error occurred");
-            addDebugInfo(`Socket error: ${JSON.stringify(errorData)}`);
+            console.log(`Socket error: ${JSON.stringify(errorData)}`);
         });
 
         // Cleanup on unmount
@@ -133,14 +104,6 @@ export default function Leaderboard({ quizCode, organizerName }) {
         };
     }, [quizCode, organizerName]);
 
-    const startQuiz = () => {
-        if (socketRef.current?.connected) {
-            addDebugInfo("Starting quiz...");
-            socketRef.current.emit("startQuiz", { quizCode });
-        }
-    };
-
-    // --- UI (kept identical to your version) ---
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black text-white flex flex-col items-center p-6">
             {/* Header */}
@@ -165,26 +128,8 @@ export default function Leaderboard({ quizCode, organizerName }) {
                 </div>
             </div>
 
-            {/* Error Message */}
-            {error && (
-                <div className="mb-4 p-3 bg-red-600 rounded-lg text-white max-w-2xl">
-                    <strong>Error:</strong> {error}
-                </div>
-            )}
-
-            {/* Debug Info (Remove in production) */}
-            <div className="mb-4 w-full max-w-2xl">
-                <details className="text-xs text-gray-400">
-                    <summary className="cursor-pointer hover:text-white">
-                        Debug Info ({debugInfo.length})
-                    </summary>
-                    <div className="mt-2 p-2 bg-gray-800 rounded max-h-32 overflow-y-auto">
-                        {debugInfo.map((info, index) => (
-                            <div key={index} className="mb-1">{info}</div>
-                        ))}
-                    </div>
-                </details>
-            </div>
+            
+           
 
             {/* Leaderboard Display */}
             <div className="w-full max-w-2xl bg-gray-800 rounded-2xl shadow-2xl p-4 sm:p-6">

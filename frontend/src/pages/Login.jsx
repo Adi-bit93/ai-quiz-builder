@@ -185,7 +185,7 @@ export default function Login() {
           <p className="text-center text-sm text-gray-600">
             New here?{" "}
             <Link
-              to="/"
+              to="/signup"
               className="font-semibold text-purple-600 hover:text-purple-700 transition-colors"
             >
               Create account
