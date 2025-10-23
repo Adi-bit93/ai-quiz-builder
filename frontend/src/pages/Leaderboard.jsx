@@ -19,7 +19,6 @@ export default function Leaderboard({ quizCode, organizerName }) {
             transports: ["websocket"],
         });
 
-        console.log("Current socket ID:", socket.id);
         // Validate required props
         if (!quizCode) {
             setError("Quiz code is required");
@@ -53,7 +52,7 @@ export default function Leaderboard({ quizCode, organizerName }) {
             console.log("Raw leaderboard data (updateParticipants):", data);
 
             if (Array.isArray(data)) {
-                // Keep UI consistent - sort descending by score
+                // sort descending by score
                 const sorted = data.slice().sort((a, b) => b.score - a.score);
                 setLeaderboard(sorted);
                 setError(null);
@@ -62,7 +61,7 @@ export default function Leaderboard({ quizCode, organizerName }) {
             }
         });
 
-        // IMPORTANT: authoritative leaderboard updates (scores changed)
+        // leaderboard updates (scores changed)
         socket.on("leaderboardUpdate", (data) => {
             if (Array.isArray(data)) {
                 const sorted = data.slice().sort((a, b) => b.score - a.score);

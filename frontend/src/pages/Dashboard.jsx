@@ -245,7 +245,6 @@ export default function Dashboard() {
 
         {/* Main Content Area */}
         <main className="flex-1 p-4 lg:p-8">
-          {/* Stats Cards - Hidden when no quizzes */}
           {quizzes?.length > 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
               <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">

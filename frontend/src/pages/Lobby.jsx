@@ -1,24 +1,19 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { io } from "socket.io-client";
 import { socket } from "../lib/socket.js";
 
 export default function Lobby() {
    const location = useLocation();
   const navigate = useNavigate();
 
-  // Correct destructuring
   const { quiz, participant, role, quizCode  } = location.state || {};
- // const quizCode = quiz?.quizCode; // ✅ safely extract quizCode
-  const name = participant;        // ✅ rename for clarity
-  const title = quiz?.data?.title;       // ✅ rename for clarity
+  const name = participant;         
+  const title = quiz?.data?.title;   
 
 
   const [participants, setParticipants] = useState([]);
 
   useEffect(() => {
-    console.log("Quiz Data: ",{quiz})
-    console.log("Lobby state:", { quizCode, name, role, title });
 
     if (!quizCode || !name || !role) {
       navigate("/"); // if someone lands here by mistake

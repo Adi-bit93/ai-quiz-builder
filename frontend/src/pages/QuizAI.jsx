@@ -15,12 +15,11 @@ export default function QuizAI() {
 
   const messagesEndRef = useRef(null);
 
-  // 👇 Auto scroll on new messages
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
 
-  // --- Parse input (unchanged logic) ---
+  // --- Parse input  ---
   function parseInput(input) {
     const lower = input.toLowerCase().trim();
     const qtyMatch = lower.match(/\b(\d+)\s*(?:questions?|qs?)\b/i);
@@ -55,7 +54,7 @@ export default function QuizAI() {
     return { topic: topic || "General", difficulty, questionCount };
   }
 
-  // --- Send message (unchanged logic) ---
+  // --- Send message ---
   const sendMessage = async () => {
     if (!input.trim()) return;
 

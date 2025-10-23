@@ -1,13 +1,8 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import io from "socket.io-client";
 import { motion, AnimatePresence } from "framer-motion";
 import { socket } from "../lib/socket.js";
 
-// ⚙️ Fix 1: Ensure socket connects cleanly only once
-// const socket = io(import.meta.env.VITE_BACKEND_URL, {
-//   transports: ["websocket"],
-// });
 
 export default function QuizStart() {
   const navigate = useNavigate();
@@ -19,10 +14,10 @@ export default function QuizStart() {
   const [score, setScore] = useState(0);
   const [answers, setAnswers] = useState([]);
   const [timeLeft, setTimeLeft] = useState(quiz?.timerSeconds || 20);
-  const [showTimeUp, setShowTimeUp] = useState(false);
+  // const [showTimeUp, setShowTimeUp] = useState(false);
   const timerRef = useRef(null);
 
-  // 🧠 NEW: join room on load to activate leaderboard
+  // join room on load to activate leaderboard
   useEffect(() => {
     if (quizCode && participant) {
       socket.emit("joinLobby", {
@@ -84,7 +79,7 @@ export default function QuizStart() {
     };
 
     const updatedAnswers = [...answers, answerData];
-    const pointsEarned = updatedScore - score;
+    // const pointsEarned = updatedScore - score;
     setAnswers(updatedAnswers);
     setScore(updatedScore);
 
@@ -113,9 +108,7 @@ export default function QuizStart() {
         wasAnswered: false
       })
     }
-    // 🧠 Fix 2: send total score, not just pointsEarned
-
-
+    
     if (currentQ < quiz.questions.length - 1) {
       setCurrentQ((prev) => prev + 1);
       setSelected(null);
