@@ -17,10 +17,12 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: process.env.FRONTEND_URL,
+    origin: [process.env.FRONTEND_URL, "http://localhost:5173"],
     methods: ["GET", "POST"],
     credentials: true,
   },
+  transports: ["websocket", "polling"],
+  allowEIO3: true
 });
 
 // --- Global Leaderboards ---
@@ -133,6 +135,10 @@ io.on("connection", (socket) => {
       console.error("disconnect error:", err);
     }
   });
+});
+
+app.get("/health", (req, res) => {
+  res.send("Server is live 🚀");
 });
 
 server.listen(PORT, () => {
