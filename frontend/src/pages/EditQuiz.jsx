@@ -17,7 +17,6 @@ export default function EditQuiz() {
         (async () => {
             try {
                 const res = await apiWithAutoRefresh(`/quizzes/${id}`,
-
                     {
                         method: "GET"
                     },
@@ -167,14 +166,14 @@ export default function EditQuiz() {
                 </div>
                 {/* Buttons*/}
                 <div className="flex justify-end gap-4 mt-6">
-                    <button 
+                    <button
                         onClick={() => navigate("/dashboard")}
                         className="px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition">Cancel
                     </button>
-                    <button 
-                    onClick={handleSave}
-                    disabled={saving}
-                    className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition disabled:opacity-50">
+                    <button
+                        onClick={handleSave}
+                        disabled={saving}
+                        className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition disabled:opacity-50">
                         {saving ? "Saving..." : "Save Changes"}
                     </button>
                 </div>

@@ -1,6 +1,6 @@
 import { io } from "socket.io-client";
 
-const socket = io("http://localhost:5000", {
+const socket = io(import.meta.env.BACKEND_URI, {
   withCredentials: true,
   transports: ["websocket"],
   reconnection: true,

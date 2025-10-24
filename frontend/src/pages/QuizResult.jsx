@@ -16,9 +16,6 @@ export default function QuizResult() {
     completedAt,
   } = stateData;
 
-  console.log("QuizResult received data:", stateData);
-
-  // ✅ FIXED: check for quiz.questions directly
   if (!quiz || !quiz.questions) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -41,7 +38,6 @@ export default function QuizResult() {
     );
   }
 
-  // ✅ FIXED: Access correct quiz data
   const quizQuestions = quiz.questions || [];
   const totalQuestionsCount = totalQuestions || quizQuestions.length || 0;
 
@@ -337,13 +333,12 @@ export default function QuizResult() {
                 return (
                   <div
                     key={idx}
-                    className={`border-l-4 rounded-lg p-6 transition-all hover:shadow-md ${
-                      !wasAnswered
-                        ? "border-gray-400 bg-gray-50"
-                        : isCorrect
+                    className={`border-l-4 rounded-lg p-6 transition-all hover:shadow-md ${!wasAnswered
+                      ? "border-gray-400 bg-gray-50"
+                      : isCorrect
                         ? "border-green-500 bg-green-50"
                         : "border-red-500 bg-red-50"
-                    }`}
+                      }`}
                   >
                     <div className="flex items-start justify-between mb-4">
                       <h4 className="font-semibold text-gray-800 text-lg leading-relaxed flex-1">

@@ -89,7 +89,7 @@ export default function QuizStart() {
       console.log("Sending score update:", {
         quizCode,
         participantName: participant,
-        score: updatedScore, // ✅ Fix 2: send total score (not delta)
+        score: updatedScore, //send total score (not delta)
       },
 
         socket.emit("updateScore", {

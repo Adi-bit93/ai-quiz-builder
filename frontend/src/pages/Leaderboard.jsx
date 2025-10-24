@@ -14,7 +14,7 @@ export default function Leaderboard({ quizCode, organizerName }) {
     const socketRef = useRef(null);
 
     useEffect(() => {
-        const socket = io("http://localhost:5000", {
+        const socket = io(`${import.meta.env.BACKEND_URI}`, {
             withCredentials: true,
             transports: ["websocket"],
         });

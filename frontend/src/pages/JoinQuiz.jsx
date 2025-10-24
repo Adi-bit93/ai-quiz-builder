@@ -2,7 +2,7 @@ import { useState } from "react";
 import { apiRequest } from "../lib/api.js";
 import { useNavigate } from "react-router-dom";
 import { socket } from "../lib/socket.js";
-const Base_URL = "http://localhost:5000/api/v1";
+const Base_URL = `${import.meta.env.BACKEND_URI}/api/v1`;
 
 export default function JoinQuiz() {
   const [code, setCode] = useState("");
