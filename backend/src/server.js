@@ -15,10 +15,9 @@ connectDB()
 const PORT = process.env.PORT || 5000;
 const server = http.createServer(app);
 
-// --- Setup Socket.IO ---
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: process.env.FRONTEND_URL,
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -29,9 +28,8 @@ if (!global.activeLeaderboards) {
   global.activeLeaderboards = {};
 }
 
-// --- Scoring System ---
 const CORRECT_POINTS = 10;
-const WRONG_POINTS = -5; // deduction for wrong answers
+const WRONG_POINTS = -5; 
 
 io.on("connection", (socket) => {
   console.log("⚡ User connected:", socket.id);
@@ -67,7 +65,7 @@ io.on("connection", (socket) => {
     }
   });
 
-  // --- Start Quiz ---
+  //Start Quiz
   socket.on("startQuiz", ({ quizCode }) => {
     try {
       console.log(`🚀 Quiz ${quizCode} started`);
@@ -80,7 +78,7 @@ io.on("connection", (socket) => {
     }
   });
 
-  // --- Update Score ---
+  // Update Score 
   socket.on("updateScore", ({ quizCode, name, wasAnswered, isCorrect }) => {
     try {
       console.log("🎯 updateScore:", { quizCode, name, wasAnswered, isCorrect });
@@ -120,7 +118,6 @@ io.on("connection", (socket) => {
 
   // --- Disconnect Cleanup ---
   socket.on("disconnect", () => {
-    console.log("❌ User disconnected:", socket.id);
     try {
       for (const quizCode of Object.keys(global.activeLeaderboards)) {
         const before = global.activeLeaderboards[quizCode].length;

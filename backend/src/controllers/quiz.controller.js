@@ -84,10 +84,6 @@ const generateQuizAI = asyncHandler(async (req, res) => {
         .json(new ApiResponse(201, quiz, "Quiz generated and saved successfully"));
 });
 
-
-
-
-
 const createQuiz = asyncHandler(async (req, res) => {
     const { title, topic, difficulty, questionCount, timerMode, timerSeconds } = req.body;
 
