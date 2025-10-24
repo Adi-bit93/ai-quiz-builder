@@ -38,7 +38,7 @@ export const AuthProvider = ({ children }) => {
             }
             try {
                 const res = await api.get("/auth/profile", {
-                    headers: { Authorization: `Bearer ${accessToken}`},
+                    token: accessToken
                 });
                 if(res.ok) {
                     const json = await res.json();
