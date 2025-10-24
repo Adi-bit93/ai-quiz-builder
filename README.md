@@ -26,7 +26,6 @@
 - [Architecture](#-architecture)
 - [Prerequisites](#-prerequisites)
 - [Installation](#-installation)
-- [Configuration](#-configuration)
 - [Usage Guide](#-usage-guide)
 - [API Documentation](#-api-documentation)
 - [Real-time Features](#-real-time-features)
@@ -763,7 +762,7 @@ in the Software without restriction...
 
 <div align="center">
 
-**Made with ❤️ by the AI Quiz Builder Team**
+**Made with ❤️ by the AI Quiz Builder (Adi-bit93)**
 
 ⭐ Star us on GitHub — it helps!
 
