@@ -9,7 +9,7 @@ app.use(cors({
         "http://localhost:5173",
         process.env.CORS_ORIGIN
     ], 
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    methods: ["GET", "POST", "PUT", "PATCH" ,"DELETE", "OPTIONS"],
     credentials: true 
 }));
 
