@@ -1,12 +1,11 @@
 import redis from "../lib/redis.js";
-
 export const rateLimit = (options = {}) => {
     const {
-        windowInSeconds = 60, // time window
-        maxRequests = 5,     // allowed requests
-        keyPrefix = "rl" ,
+        windowInSeconds = 60,
+        maxRequests = 5,
+        keyPrefix = "rl",
     } = options;
-    
+
     return async (req, res, next) => {
         try {
             const ip = req.ip;
@@ -15,20 +14,23 @@ export const rateLimit = (options = {}) => {
             const requests = await redis.incr(key);
 
             if (requests === 1) {
-                await redis.expire(key, windowInSeconds);
+                redis.expire(key, windowInSeconds); // no await needed
             }
+
             if (requests > maxRequests) {
                 return res.status(429).json({
                     success: false,
-                    message: "Too many requests, please try again later."
+                    message: "Too many requests. Try again later.",
                 });
             }
+
             next();
         } catch (error) {
-            console.error("rate limiter error: ", error);
+            console.error("Rate limiter error:", error);
             next();
         }
     };
 };
+
 
 

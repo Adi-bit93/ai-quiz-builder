@@ -102,7 +102,7 @@ io.on("connection", (socket) => {
         return;
       }
 
-      // Update score based on correctness
+      // Update score on correctness
       const delta = isCorrect ? CORRECT_POINTS : WRONG_POINTS;
       player.score = Math.max(0, (player.score || 0) + delta); // prevent negative score
 
